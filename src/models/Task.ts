@@ -13,7 +13,7 @@ export const Task = sequelize.define("Task", {
         
     },
     done: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BOOLEAN,
         defaultValue: false
     },
 }, {
