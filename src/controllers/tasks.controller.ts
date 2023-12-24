@@ -5,6 +5,7 @@ import { Model } from 'sequelize'; // Import the Model type from Sequelize
 type Task = {
     name: string,
     done: boolean,
+    projectId?: number
 }
 
 export const getTasks = async(req: Request, res: Response) => {
@@ -31,11 +32,12 @@ export const getTask = async (req: Request, res:Response) => {
 }
 
 export const createTask = async(req: Request, res: Response) => {
-    const {name, done} = req.body;
+    const {name, done, projectId} = req.body;
 try {
     const newTask =  await Task.create({
         name,
-        done
+        done,
+        projectId
     })
     res.json(newTask);
     
@@ -48,12 +50,13 @@ try {
 
 export const updateTask = async(req: Request, res: Response) => {
     try {
-    const {name, priority, description} = req.body;
+    const {name, description, projectId} = req.body;
     const {id} = req.params;
     const foundTask =  await Task.findByPk(id) as Model<Task> | null;
     if(!foundTask)return res.status(404).json({message: "Task not found"});
     (foundTask as unknown as Task).name = name;
     (foundTask as unknown as Task).done = description;
+    (foundTask as unknown as Task).projectId = projectId;
     foundTask.save();
     res.json(foundTask);
 } catch (error: unknown) {
