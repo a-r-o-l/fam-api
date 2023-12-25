@@ -43,7 +43,7 @@ app.get('/ping', async(req:Request, res: Response) => {
 
 async function main() {
     try {
-        await sequelize.sync({ force: true });
+        await sequelize.sync({ force: false });
         console.log("Connection has been established successfully.");
         app.listen(3000, () => {
             console.log('Server running on port 3000');
