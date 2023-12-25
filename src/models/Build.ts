@@ -23,5 +23,5 @@ export const Build = sequelize.define("Build", {
     updatedAt: true
 })
 
-Build.hasMany(Apartment, {foreignKey: "BuildId", sourceKey: "id"})
-Apartment.belongsTo(Build, {foreignKey: "BuildId", targetKey: "id"})
+Build.hasMany(Apartment, {foreignKey: "buildId", sourceKey: "id"})
+Apartment.belongsTo(Build, {foreignKey: "buildId", targetKey: "id"})
