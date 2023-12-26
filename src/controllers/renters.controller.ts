@@ -13,7 +13,7 @@ type Renter = {
 
 export const getRenters = async(req: Request, res: Response) => {
     try {
-        const renters = await Renter.findAll();
+        const renters = await Renter.findAll({include: [{model:Apartment, as: "apartment"}]});
         res.json(renters)
     } catch (error: unknown) {
         return res.status(500).json({message: (error as Error).message})
