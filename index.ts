@@ -5,8 +5,6 @@ import {sequelize  } from "./src/database/database";
 import apartmentsRoutes from "./src/routes/apartments.route";
 import buildsRoutes from "./src/routes/builds.route";
 import rentersRoutes from "./src/routes/renters.route";
-import "./src/models/Project";
-import "./src/models/Task";
 import "./src/models/Apartment";
 import "./src/models/Build";
 import "./src/models/Renter";

@@ -16,8 +16,8 @@ type Apartment = {
 
 export const getApartments = async(req: Request, res: Response) => {
     try {
-        const tasks = await Apartment.findAll({include: [{model: Renter, as: "renter"}]});
-        res.json(tasks)
+        const apartments = await Apartment.findAll({include: [{model: Renter, as: "renter"}]});
+        res.json(apartments)
     } catch (error: unknown) {
         return res.status(500).json({message: (error as Error).message})
     }
