@@ -1,7 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
 import { Apartment } from "./Apartment";
-import { Contract } from "./Contract";
 
 export const Renter = sequelize.define("Renter", {
     id: {

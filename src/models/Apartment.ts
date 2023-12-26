@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
-import { Contract } from "./Contract";
 import { Renter } from "./Renter";
 
 export const Apartment = sequelize.define("Apartment", {

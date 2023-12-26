@@ -9,7 +9,6 @@ import "./src/models/Project";
 import "./src/models/Task";
 import "./src/models/Apartment";
 import "./src/models/Build";
-import "./src/models/Contract";
 import "./src/models/Renter";
 
 config()
