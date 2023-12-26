@@ -2,11 +2,8 @@ import express,{Express, Response, Request} from 'express';
 import pg from "pg"
 import {config  } from "dotenv";
 import {sequelize  } from "./src/database/database";
-import projectsRoutes from "./src/routes/projects.route";
-import tasksRoutes from "./src/routes/tasks.route";
 import apartmentsRoutes from "./src/routes/apartments.route";
 import buildsRoutes from "./src/routes/builds.route";
-import contractsRoutes from "./src/routes/contracts.route";
 import rentersRoutes from "./src/routes/renters.route";
 import "./src/models/Project";
 import "./src/models/Task";
@@ -20,11 +17,8 @@ config()
 const app: Express = express();
 
 app.use(express.json());
-app.use(projectsRoutes);
-app.use(tasksRoutes);
 app.use(apartmentsRoutes);
 app.use(buildsRoutes);
-app.use(contractsRoutes);
 app.use(rentersRoutes);
 
 const pool = new pg.Pool({
