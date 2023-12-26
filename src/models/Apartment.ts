@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
-import { Contract } from "./Contract";
+import { Renter } from "./Renter";
 
 export const Apartment = sequelize.define("Apartment", {
     id: {
@@ -19,8 +19,26 @@ export const Apartment = sequelize.define("Apartment", {
     value:{
         type: DataTypes.INTEGER,
         defaultValue: 0
+    },
+    date_start: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+    date_end: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+    isExpired: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    renterId:{
+        type: DataTypes.INTEGER,
+    },
+    buildId:{
+        type: DataTypes.INTEGER,
     }
 },)
 
-Apartment.hasMany(Contract, {foreignKey: "apartmentId",as:"apartment", sourceKey: "id"})
-Contract.belongsTo(Apartment, {foreignKey: "apartmentId",as:"apartment", targetKey: "id"})
+Apartment.hasOne(Renter, {foreignKey: "apartmentId",as:'apartment', sourceKey: "id", onUpdate: 'CASCADE'})
+Renter.belongsTo(Apartment, {foreignKey: "apartmentId",as:'apartment', targetKey: "id", onUpdate: 'CASCADE'})

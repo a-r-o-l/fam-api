@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import {Build} from "../models/Build";   
 import { Model } from 'sequelize'; // Import the Model type from Sequelize
 import { Apartment } from '../models/Apartment';
+import { Renter } from '../models/Renter';
 
 type Build = {
     address: string,
@@ -69,7 +70,7 @@ export const deleteBuild = async(req: Request, res: Response) => {
 export const getBuildApartments = async(req: Request, res: Response) => {
     try {
         const {id} = req.params;
-        const apartments = await Apartment.findAll({where: {buildId: id}});
+        const apartments = await Apartment.findAll({where: {buildId: id}, include:[{model: Renter, as: "renter"}]});
         res.json(apartments);
     } catch (error: unknown) {
         return res.status(500).json({message: (error as Error).message})
