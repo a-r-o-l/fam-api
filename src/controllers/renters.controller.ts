@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import {Renter} from "../models/Renter";   
 import { Model } from 'sequelize'; // Import the Model type from Sequelize
-import { Apartment } from '../models/Apartment';
 
 type Renter = {
     name: string,
@@ -13,7 +12,7 @@ type Renter = {
 
 export const getRenters = async(req: Request, res: Response) => {
     try {
-        const renters = await Renter.findAll({include: [{model:Apartment, as: "apartment"}]});
+        const renters = await Renter.findAll();
         res.json(renters)
     } catch (error: unknown) {
         return res.status(500).json({message: (error as Error).message})

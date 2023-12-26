@@ -39,6 +39,3 @@ export const Apartment = sequelize.define("Apartment", {
         type: DataTypes.INTEGER,
     }
 },)
-
-Apartment.hasOne(Renter, {foreignKey: "apartmentId",as:'apartment', sourceKey: "id", onUpdate: 'CASCADE'})
-Renter.belongsTo(Apartment, {foreignKey: "apartmentId",as:'apartment', targetKey: "id", onUpdate: 'CASCADE'})
