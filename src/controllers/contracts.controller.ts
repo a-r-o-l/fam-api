@@ -35,7 +35,7 @@ export const getContract = async (req: Request, res:Response) => {
 export const getContractByApartment = async (req: Request, res:Response) => {
     try {
         const {id} = req.params;
-        const foundContrat = await Contract.findOne({where: {apatmentId: id}, include: [{model: Apartment, as: "apartment"}, {model: Renter, as: "renter"}]});
+        const foundContrat = await Contract.findOne({where: {apartmentId: id}, include: [{model: Apartment, as: "apartment"}, {model: Renter, as: "renter"}]});
         if(!foundContrat) return res.status(404).json({message: "Contract not found"});
         res.json(foundContrat);
     } catch (error: unknown) {
