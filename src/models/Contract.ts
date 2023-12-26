@@ -21,8 +21,12 @@ export const Contract = sequelize.define("Contract", {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     },
-    
-    
+    apartmentId:{
+        type: DataTypes.INTEGER,
+    },
+    renterId:{
+        type: DataTypes.INTEGER,
+    }
 }, {
     timestamps: true,
     createdAt: true,
