@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import {Contract} from "../models/Contract";   
+import {Apartment} from "../models/Apartment";   
 import { Model } from 'sequelize'; // Import the Model type from Sequelize
+import {Renter} from "../models/Renter";
 
 type Contract = {
     date_start: string,
@@ -23,6 +25,17 @@ export const getContract = async (req: Request, res:Response) => {
     try {
         const {id} = req.params;
         const foundContrat = await Contract.findOne({where: {id}});
+        if(!foundContrat) return res.status(404).json({message: "Contract not found"});
+        res.json(foundContrat);
+    } catch (error: unknown) {
+        return res.status(500).json({message: (error as Error).message})
+    }
+}
+
+export const getContractByApartment = async (req: Request, res:Response) => {
+    try {
+        const {id} = req.params;
+        const foundContrat = await Contract.findOne({where: {apatmentId: id}, include: [{model: Apartment, as: "apartment"}, {model: Renter, as: "renter"}]});
         if(!foundContrat) return res.status(404).json({message: "Contract not found"});
         res.json(foundContrat);
     } catch (error: unknown) {
