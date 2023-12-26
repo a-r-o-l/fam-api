@@ -32,5 +32,5 @@ export const Renter = sequelize.define("Renter", {
     updatedAt: true
 })
 
-Renter.hasMany(Contract, {foreignKey: "renterId", sourceKey: "id"})
-Contract.belongsTo(Renter, {foreignKey: "renterId", targetKey: "id"})
+Renter.hasMany(Contract, {foreignKey: "renterId",as:'renter', sourceKey: "id"})
+Contract.belongsTo(Renter, {foreignKey: "renterId",as:'renter', targetKey: "id"})

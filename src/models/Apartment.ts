@@ -22,5 +22,5 @@ export const Apartment = sequelize.define("Apartment", {
     }
 },)
 
-Apartment.hasMany(Contract, {foreignKey: "apartmentId", sourceKey: "id"})
-Contract.belongsTo(Apartment, {foreignKey: "apartmentId", targetKey: "id"})
+Apartment.hasMany(Contract, {foreignKey: "apartmentId",as: "apartment", sourceKey: "id"})
+Contract.belongsTo(Apartment, {foreignKey: "apartmentId",as:"apartment", targetKey: "id"})
