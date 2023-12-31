@@ -10,18 +10,23 @@ export const Renter = sequelize.define("Renter", {
   },
   name: {
     type: DataTypes.STRING(50),
+    allowNull: true,
   },
   lastname: {
     type: DataTypes.STRING(50),
+    allowNull: true,
   },
   dni: {
     type: DataTypes.STRING(50),
+    allowNull: true,
   },
   tel: {
     type: DataTypes.STRING(50),
+    allowNull: true,
   },
   apartmentId: {
     type: DataTypes.INTEGER,
+    allowNull: true,
   },
 });
 
