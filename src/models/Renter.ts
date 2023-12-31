@@ -28,6 +28,11 @@ export const Renter = sequelize.define("Renter", {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  renting: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    allowNull: true,
+  },
 });
 
 Renter.hasOne(Apartment, {
