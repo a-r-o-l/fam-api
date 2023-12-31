@@ -8,6 +8,7 @@ type Renter = {
   dni: string;
   tel: string;
   apartmentId?: BigInteger;
+  renting?: boolean;
 };
 
 export const getRenters = async (req: Request, res: Response) => {
