@@ -54,9 +54,3 @@ Renter.hasOne(Payment, {
   sourceKey: "id",
   onUpdate: "CASCADE",
 });
-Payment.belongsTo(Renter, {
-  foreignKey: "renterId",
-  as: "ownerPaid",
-  targetKey: "id",
-  onUpdate: "CASCADE",
-});
