@@ -5,9 +5,11 @@ import { sequelize } from "./src/database/database";
 import apartmentsRoutes from "./src/routes/apartments.route";
 import buildsRoutes from "./src/routes/builds.route";
 import rentersRoutes from "./src/routes/renters.route";
+import paymentsRoutes from "./src/routes/payments.route";
 import "./src/models/Apartment";
 import "./src/models/Build";
 import "./src/models/Renter";
+import "./src/models/Payment";
 
 config();
 
@@ -17,6 +19,7 @@ app.use(express.json());
 app.use(apartmentsRoutes);
 app.use(buildsRoutes);
 app.use(rentersRoutes);
+app.use(paymentsRoutes);
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,

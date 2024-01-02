@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
 import { Apartment } from "./Apartment";
+import { Payment } from "./Payment";
 
 export const Renter = sequelize.define("Renter", {
   id: {
@@ -42,6 +43,18 @@ Renter.hasOne(Apartment, {
   onUpdate: "CASCADE",
 });
 Apartment.belongsTo(Renter, {
+  foreignKey: "renterId",
+  as: "renter",
+  targetKey: "id",
+  onUpdate: "CASCADE",
+});
+Renter.hasOne(Payment, {
+  foreignKey: "renterId",
+  as: "renter",
+  sourceKey: "id",
+  onUpdate: "CASCADE",
+});
+Payment.belongsTo(Renter, {
   foreignKey: "renterId",
   as: "renter",
   targetKey: "id",
