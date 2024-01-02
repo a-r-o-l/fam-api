@@ -50,13 +50,13 @@ Apartment.belongsTo(Renter, {
 });
 Renter.hasOne(Payment, {
   foreignKey: "renterId",
-  as: "renter",
+  as: "ownerPaid",
   sourceKey: "id",
   onUpdate: "CASCADE",
 });
 Payment.belongsTo(Renter, {
   foreignKey: "renterId",
-  as: "renter",
+  as: "ownerPaid",
   targetKey: "id",
   onUpdate: "CASCADE",
 });
