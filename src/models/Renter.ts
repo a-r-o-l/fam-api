@@ -34,6 +34,10 @@ export const Renter = sequelize.define("Renter", {
     defaultValue: false,
     allowNull: true,
   },
+  image_url: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+  },
 });
 
 Renter.hasOne(Apartment, {
@@ -46,11 +50,5 @@ Apartment.belongsTo(Renter, {
   foreignKey: "renterId",
   as: "renter",
   targetKey: "id",
-  onUpdate: "CASCADE",
-});
-Renter.hasOne(Payment, {
-  foreignKey: "renterId",
-  as: "ownerPaid",
-  sourceKey: "id",
   onUpdate: "CASCADE",
 });

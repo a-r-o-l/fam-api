@@ -44,16 +44,3 @@ export const Apartment = sequelize.define("Apartment", {
     allowNull: true,
   },
 });
-
-Apartment.hasOne(Payment, {
-  foreignKey: "apartmentId",
-  as: "apartment",
-  sourceKey: "id",
-  onUpdate: "CASCADE",
-});
-Payment.belongsTo(Apartment, {
-  foreignKey: "apartmentId",
-  as: "apartment",
-  targetKey: "id",
-  onUpdate: "CASCADE",
-});
