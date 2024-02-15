@@ -1,4 +1,5 @@
 import express, { Express, Response, Request } from "express";
+import morgan from "morgan";
 import pg from "pg";
 import { config } from "dotenv";
 import { sequelize } from "./src/database/database";
@@ -6,6 +7,7 @@ import apartmentsRoutes from "./src/routes/apartments.route";
 import buildsRoutes from "./src/routes/builds.route";
 import rentersRoutes from "./src/routes/renters.route";
 import paymentsRoutes from "./src/routes/payments.route";
+import uploadRoutes from "./src/routes/upload.route";
 import "./src/models/Apartment";
 import "./src/models/Build";
 import "./src/models/Renter";
@@ -14,12 +16,14 @@ import "./src/models/Payment";
 config();
 
 const app: Express = express();
+app.use(morgan("combined"));
 
 app.use(express.json());
 app.use(apartmentsRoutes);
 app.use(buildsRoutes);
 app.use(rentersRoutes);
 app.use(paymentsRoutes);
+app.use(uploadRoutes);
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
