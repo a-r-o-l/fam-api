@@ -7,7 +7,9 @@
     "start": "tsc && node dist/index.js",
     "build": "tsc -p .",
     "dev": "npx tsc -w & nodemon dist/index.js",
-    "test": "tsc && node dist/index.js"
+    "test": "tsc && node dist/index.js",
+    "migration:create": "npx sequelize-cli migration:create",
+    "migrate": "npx sequelize-cli db:migrate"
   },
   "keywords": [],
   "author": "",

@@ -8,6 +8,7 @@ const createAutomaticPayment = async () => {
   try {
     let newsPayments = [];
     const renters = await Renter.findAll();
+    console.log(renters.length);
     if (renters?.length) {
       for (const renter of renters) {
         const currentMonth = dayjs().month();
@@ -17,9 +18,18 @@ const createAutomaticPayment = async () => {
           },
         });
         if (!existingsPayments?.length) {
-          return;
+          newsPayments.push({
+            renterId: renter.dataValues.id,
+            date: dayjs(renter.dataValues.start_date)
+              .month(dayjs().month())
+              .date(dayjs().date())
+              .format("YYYY-MM-DD"),
+            amount: renter.dataValues.amount,
+          });
+          continue;
         }
         const latestPayment = existingsPayments?.reduce(
+          //ultimo pago
           (latest: any, payment: any) => {
             const paymentDate = dayjs(payment.date);
             if (paymentDate.isAfter(latest.date)) {
@@ -36,7 +46,7 @@ const createAutomaticPayment = async () => {
           newsPayments.push({
             renterId: renter.dataValues.id,
             date: dayjs().date(lastPayment.date()).format("YYYY-MM-DD"),
-            fee: renter.dataValues.fee,
+            amount: renter.dataValues.amount,
           });
         }
       }

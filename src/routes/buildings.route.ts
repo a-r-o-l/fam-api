@@ -1,11 +1,8 @@
 import { Router } from "express";
-import {
-  createBuilding,
-  deleteBuilding,
-  getBuilding,
-  getBuildings,
-  updateBuilding,
-} from "../../controllers/new-fam/buildings.controller";
+import { deleteBuilding } from "../controllers/buildings/DELETE";
+import { getBuilding, getBuildings } from "../controllers/buildings/GET";
+import { createBuilding } from "../controllers/buildings/POST";
+import { updateBuilding } from "../controllers/buildings/UPDATE";
 
 const router = Router();
 

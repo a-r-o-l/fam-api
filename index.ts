@@ -5,21 +5,31 @@ import { config } from "dotenv";
 import cors from "cors";
 import { sequelize } from "./src/database/database";
 import cron from "node-cron";
-import buildingsRoutes from "./src/routes/new-fam/buildings.route";
-import rentersRoutes from "./src/routes/new-fam/renters.route";
-import { createAutomaticPayment } from "./src/controllers/new-fam/payments.controller";
-import paymentsRoutes from "./src/routes/new-fam/payments.route";
-import "./src/models/new-fam/Building";
-import "./src/models/new-fam/Renter";
+import buildingsRoutes from "./src/routes/buildings.route";
+import rentersRoutes from "./src/routes/renters.route";
+import paymentsRoutes from "./src/routes/payments.route";
+import analitycsRoutes from "./src/routes/analitycs.route";
+import apartmentsRoutes from "./src/routes/apartments.route";
+import contractsRoutes from "./src/routes/contracts.route";
+import "./src/models/Building";
+import "./src/models/Renter";
 import { automaticFunctions } from "./src/cron/automaticFunctions";
+import {
+  cleanExpiredContracts,
+  createAutomaticPayments,
+} from "./src/controllers/cron/POST";
+import { test } from "./src/controllers/cron/GET";
 
 config();
-cron.schedule("* */30 * * * *", async () => {
-  automaticFunctions.createAutomaticPayment();
-  // await createAutomaticPayment();
+cron.schedule("*/30 * * * * *", async () => {
+  console.log("se dispara cron");
+  // await test();
+  // await cleanExpiredContracts();
+  // await createAutomaticPayments();
 });
+
 const app: Express = express();
-app.use(morgan("tiny"));
+app.use(morgan("dev"));
 
 app.use(cors());
 
@@ -27,10 +37,13 @@ app.use(express.json());
 app.use(buildingsRoutes);
 app.use(rentersRoutes);
 app.use(paymentsRoutes);
+app.use(analitycsRoutes);
+app.use(apartmentsRoutes);
+app.use(contractsRoutes);
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
-  // ssl: true,
+  ssl: true,
 });
 
 app.get("/", (req: Request, res: Response) => {
