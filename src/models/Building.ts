@@ -1,28 +1,26 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
+import { Apartment } from "./Apartment";
 
-export const Apartment = sequelize.define(
-  "Apartment",
+export const Building = sequelize.define(
+  "Building",
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    number: {
+    address: {
       type: DataTypes.STRING(50),
       allowNull: false,
     },
-    rented: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+    name: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
     },
-    buildingId: {
+    apartments: {
       type: DataTypes.INTEGER,
-    },
-    activeContractId: {
-      type: DataTypes.INTEGER,
-      defaultValue: null,
+      allowNull: false,
     },
   },
   {
@@ -31,3 +29,6 @@ export const Apartment = sequelize.define(
     updatedAt: true,
   }
 );
+
+Building.hasMany(Apartment, { foreignKey: "buildingId", sourceKey: "id" });
+Apartment.belongsTo(Building, { foreignKey: "buildingId", targetKey: "id" });

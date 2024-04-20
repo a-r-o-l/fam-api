@@ -1,54 +1,47 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
-import { Apartment } from "./Apartment";
-import { Payment } from "./Payment";
 
-export const Renter = sequelize.define("Renter", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+export const Renter = sequelize.define(
+  "Renter",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    name: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+    lastname: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
+    dni: {
+      type: DataTypes.STRING(10),
+      allowNull: false,
+      unique: true,
+    },
+    phone: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+    },
+    image_url: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+    },
+    activeContractId: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
   },
-  name: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-  },
-  lastname: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-  },
-  dni: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-  },
-  tel: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-  },
-  apartmentId: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-  },
-  renting: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-    allowNull: true,
-  },
-  image_url: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-  },
-});
-
-Renter.hasOne(Apartment, {
-  foreignKey: "renterId",
-  as: "renter",
-  sourceKey: "id",
-  onUpdate: "CASCADE",
-});
-Apartment.belongsTo(Renter, {
-  foreignKey: "renterId",
-  as: "renter",
-  targetKey: "id",
-  onUpdate: "CASCADE",
-});
+  {
+    timestamps: true,
+    createdAt: true,
+    updatedAt: true,
+  }
+);
