@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
-import { Renter } from "../models/new-fam/Renter";
+import { Renter } from "../models/Renter";
 import { Op } from "sequelize";
-import { Payment } from "../models/new-fam/Payment";
+import { Payment } from "../models/Payment";
 
 const createAutomaticPayment = async () => {
   console.log("se disparo");

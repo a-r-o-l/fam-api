@@ -13,16 +13,18 @@ import apartmentsRoutes from "./src/routes/apartments.route";
 import contractsRoutes from "./src/routes/contracts.route";
 import "./src/models/Building";
 import "./src/models/Renter";
-import { automaticFunctions } from "./src/cron/automaticFunctions";
+// import { automaticFunctions } from "./src/cron/automaticFunctions";
 import {
   cleanExpiredContracts,
   createAutomaticPayments,
 } from "./src/controllers/cron/POST";
 import { test } from "./src/controllers/cron/GET";
+import dayjs from "dayjs";
 
 config();
 cron.schedule("*/30 * * * * *", async () => {
   console.log("se dispara cron");
+  console.log(dayjs().format("YYYY-MM-DD HH:mm:ss"));
   // await test();
   // await cleanExpiredContracts();
   // await createAutomaticPayments();
@@ -59,8 +61,9 @@ async function main() {
   try {
     await sequelize.sync({ force: false });
     console.log("Connection has been established successfully.");
-    app.listen(3000, () => {
-      console.log(`Server running on port ${process.env.DATABASE_PORT}`);
+    app.listen(process.env.PORT, () => {
+      console.log(`Server running on port ${process.env.PORT}`);
+      console.log(`Database running on port ${process.env.DATABASE_PORT}`);
     });
   } catch (error) {
     console.error("Unable to connect to the database:", error);
