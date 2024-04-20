@@ -13,21 +13,18 @@ import apartmentsRoutes from "./src/routes/apartments.route";
 import contractsRoutes from "./src/routes/contracts.route";
 import "./src/models/Building";
 import "./src/models/Renter";
-// import { automaticFunctions } from "./src/cron/automaticFunctions";
 import {
   cleanExpiredContracts,
   createAutomaticPayments,
 } from "./src/controllers/cron/POST";
-import { test } from "./src/controllers/cron/GET";
 import dayjs from "dayjs";
 
 config();
-cron.schedule("*/30 * * * * *", async () => {
+cron.schedule("0 20 * * *", async () => {
   console.log("se dispara cron");
   console.log(dayjs().format("YYYY-MM-DD HH:mm:ss"));
-  // await test();
-  // await cleanExpiredContracts();
-  // await createAutomaticPayments();
+  await cleanExpiredContracts();
+  await createAutomaticPayments();
 });
 
 const app: Express = express();

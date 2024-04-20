@@ -121,7 +121,6 @@ export const createAutomaticPayments = async () => {
             value: contract.value,
             payed: false,
           });
-          console.log(newsPayments);
         } else {
           const latestPayment = payments.reduce(
             (latest: any, payment: any) => {
@@ -146,8 +145,6 @@ export const createAutomaticPayments = async () => {
         }
       }
     }
-    console.log(newsPayments);
-    console.log("new payments => ", newsPayments.length);
     if (newsPayments.length) {
       await Payment.bulkCreate(newsPayments);
     }
