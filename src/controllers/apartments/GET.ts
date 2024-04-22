@@ -3,13 +3,14 @@ import { Apartment } from "../../models/Apartment";
 import { Building } from "../../models/Building";
 import { Contract } from "../../models/Contract";
 import { Renter } from "../../models/Renter";
+import { Sequelize } from "sequelize";
 
 export const getApartments = async (req: Request, res: Response) => {
   try {
     const { buildingId } = req.query;
     const apartments = await Apartment.findAll({
       where: buildingId ? { buildingId } : undefined,
-      order: [["number", "ASC"]],
+      order: [[Sequelize.literal("CAST(number AS INTEGER)"), "ASC"]],
       include: [
         {
           model: Building,

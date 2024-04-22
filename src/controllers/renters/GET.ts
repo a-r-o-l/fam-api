@@ -27,15 +27,13 @@ export const getRenters = async (req: Request, res: Response) => {
       if (typeof req.query.buildingId === "string") {
         const buildingIds = req.query.buildingId.split(",").map(Number);
         const numberIds = buildingIds.map((id) => Number(id));
-        console.log("nids => ", numberIds);
         const rentersByBuilding = await Renter.findAll({
           where: {
-            Apartment:{
-
+            Apartment: {
               buildingId: {
                 [Op.in]: numberIds,
               },
-            }
+            },
           },
           include: [
             {
@@ -45,7 +43,7 @@ export const getRenters = async (req: Request, res: Response) => {
                 {
                   model: Apartment,
                   as: "Apartment",
-                  
+
                   include: [
                     {
                       model: Building,
@@ -57,7 +55,6 @@ export const getRenters = async (req: Request, res: Response) => {
             },
           ],
         });
-        console.log(rentersByBuilding);
         res.json(rentersByBuilding);
       }
     } else {

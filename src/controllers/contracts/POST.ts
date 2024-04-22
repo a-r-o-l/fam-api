@@ -11,6 +11,7 @@ type ApartmentAttributes = {
   rented?: boolean;
   buildingId?: number;
   activeContractId?: number;
+  activeRenterId?: number;
   save: () => void;
 };
 
@@ -23,6 +24,7 @@ type RenterAttributes = {
   email?: string;
   image_url?: string;
   activeContractId?: number;
+  activeApartmentId?: number;
   save: () => void;
 };
 
@@ -40,13 +42,11 @@ export const createContract = async (req: Request, res: Response) => {
     const foundApartment = (await Apartment.findByPk(
       apartmentId
     )) as ApartmentAttributes;
-    //the apartment doesn't exist
     if (!foundApartment) {
       return res.status(414).json({ message: "Apartamento no encontrado" });
     }
 
     const foundRenter = (await Renter.findByPk(renterId)) as RenterAttributes;
-    //the renter doesn't exist
     if (!foundRenter) {
       return res.status(414).json({ message: "Inquilino no encontrado" });
     }
@@ -120,7 +120,10 @@ export const createContract = async (req: Request, res: Response) => {
     if (dayjs(contractEndDate).isAfter(dayjs())) {
       foundApartment.rented = true;
       foundApartment.activeContractId = newContract.getDataValue("id");
+      foundApartment.activeRenterId = renterId;
+
       foundRenter.activeContractId = newContract.getDataValue("id");
+      foundRenter.activeApartmentId = apartmentId;
       foundRenter.save();
       foundApartment.save();
     }
