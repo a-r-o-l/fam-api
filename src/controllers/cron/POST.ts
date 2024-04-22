@@ -11,6 +11,7 @@ type ApartmentAttributes = {
   rented?: boolean;
   buildingId?: number;
   activeContractId?: number | null;
+  activeRenterId?: number | null;
   save: () => void;
 };
 
@@ -23,6 +24,7 @@ type RenterAttributes = {
   email?: string;
   image_url?: string;
   activeContractId: number | null;
+  activeApartmentId: number | null;
   save: () => void;
 };
 
@@ -46,6 +48,9 @@ type PaymentAttributes = {
   payed: boolean | null;
   receipt?: string;
   contractId?: number;
+  apartmentId?: number;
+  renterId?: number;
+  payment_number?: number;
 };
 
 export const cleanExpiredContracts = async () => {
@@ -70,12 +75,14 @@ export const cleanExpiredContracts = async () => {
 
       if (apartment.activeContractId === contractModel.id) {
         apartment.activeContractId = null;
+        apartment.activeRenterId = null;
         apartment.rented = false;
         apartment.save();
       }
 
       if (renter.activeContractId === contractModel.id) {
         renter.activeContractId = null;
+        renter.activeApartmentId = null;
         renter.save();
       }
       contractModel.isExpired = true;
@@ -115,6 +122,8 @@ export const createAutomaticPayments = async () => {
         if (!payments?.length) {
           newsPayments.push({
             contractId: contract.id,
+            renterId: contract.renterId,
+            apartmentId: contract.apartmentId,
             date: dayjs(contract.start_date)
               .month(currentMonth)
               .format("YYYY/MM/DD"),
@@ -122,7 +131,7 @@ export const createAutomaticPayments = async () => {
             payed: false,
           });
         } else {
-          const latestPayment = payments.reduce(
+          const latestPayment: any = payments.reduce(
             (latest: any, payment: any) => {
               const paymentDate = dayjs(payment.date);
               return paymentDate.isAfter(latest.date) ? payment : latest;
@@ -137,8 +146,13 @@ export const createAutomaticPayments = async () => {
           ) {
             newsPayments.push({
               contractId: contract.id,
-              date: dayjs().month(currentMonth).format("YYYY/MM/DD"),
+              date: dayjs(contract.start_date)
+                .month(currentMonth)
+                .format("YYYY/MM/DD"),
               value: contract.value,
+              renterId: contract.renterId,
+              apartmentId: contract.apartmentId,
+              payment_number: latestPayment.payment_number + 1,
               payed: false,
             });
           }

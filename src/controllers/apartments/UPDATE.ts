@@ -7,11 +7,12 @@ type ApartmentAttributes = {
   number: string;
   rented: boolean;
   buildingId?: number;
+  activeRenterId?: number;
 };
 
 export const updateApartment = async (req: Request, res: Response) => {
   try {
-    const { number, rented } = req.body;
+    const { number, rented, activeRenterId } = req.body;
     const { id } = req.params;
     const foundApartment = (await Apartment.findByPk(
       id
@@ -22,6 +23,9 @@ export const updateApartment = async (req: Request, res: Response) => {
       (foundApartment as unknown as ApartmentAttributes).number = number;
     if (rented !== undefined)
       (foundApartment as unknown as ApartmentAttributes).rented = rented;
+    if (activeRenterId !== undefined)
+      (foundApartment as unknown as ApartmentAttributes).activeRenterId =
+        activeRenterId;
     foundApartment.save();
     res.json(foundApartment);
   } catch (error: unknown) {

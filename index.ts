@@ -20,7 +20,7 @@ import {
 import dayjs from "dayjs";
 
 config();
-cron.schedule("0 20 * * *", async () => {
+cron.schedule("*/40 * * * * *", async () => {
   console.log("se dispara cron");
   console.log(dayjs().format("YYYY-MM-DD HH:mm:ss"));
   await cleanExpiredContracts();

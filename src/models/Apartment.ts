@@ -24,6 +24,10 @@ export const Apartment = sequelize.define(
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
+    activeRenterId: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
   },
   {
     timestamps: true,

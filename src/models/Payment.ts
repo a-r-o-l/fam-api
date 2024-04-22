@@ -30,6 +30,16 @@ export const Payment = sequelize.define(
     contractId: {
       type: DataTypes.INTEGER,
     },
+    renterId: {
+      type: DataTypes.INTEGER,
+    },
+    apartmentId: {
+      type: DataTypes.INTEGER,
+    },
+    payment_number: {
+      type: DataTypes.INTEGER,
+      defaultValue: 1,
+    },
   },
   {
     timestamps: true,
