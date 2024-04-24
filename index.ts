@@ -20,7 +20,7 @@ import {
 import dayjs from "dayjs";
 
 config();
-cron.schedule("*/40 * * * * *", async () => {
+cron.schedule("0 1-10-18 * * *", async () => {
   console.log("se dispara cron");
   console.log(dayjs().format("YYYY-MM-DD HH:mm:ss"));
   await cleanExpiredContracts();
@@ -56,7 +56,7 @@ app.get("/ping", async (req: Request, res: Response) => {
 
 async function main() {
   try {
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ force: false });
     console.log("Connection has been established successfully.");
     app.listen(process.env.PORT, () => {
       console.log(`Server running on port ${process.env.PORT}`);
