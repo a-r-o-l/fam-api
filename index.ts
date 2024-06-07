@@ -11,6 +11,7 @@ import paymentsRoutes from "./src/routes/payments.route";
 import analitycsRoutes from "./src/routes/analitycs.route";
 import apartmentsRoutes from "./src/routes/apartments.route";
 import contractsRoutes from "./src/routes/contracts.route";
+import uploadsRoutes from "./src/routes/uploads.route";
 import "./src/models/Building";
 import "./src/models/Renter";
 import {
@@ -18,6 +19,7 @@ import {
   createAutomaticPayments,
 } from "./src/controllers/cron/POST";
 import dayjs from "dayjs";
+import path from "path";
 
 config();
 cron.schedule("0 1-10-18 * * *", async () => {
@@ -32,6 +34,8 @@ app.use(morgan("dev"));
 
 app.use(cors());
 
+app.use("/images", express.static(path.join(__dirname, "images")));
+
 app.use(express.json());
 app.use(buildingsRoutes);
 app.use(rentersRoutes);
@@ -39,6 +43,7 @@ app.use(paymentsRoutes);
 app.use(analitycsRoutes);
 app.use(apartmentsRoutes);
 app.use(contractsRoutes);
+app.use(uploadsRoutes);
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
