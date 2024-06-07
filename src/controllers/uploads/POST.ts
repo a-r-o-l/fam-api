@@ -4,7 +4,7 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
 const storage = multer.diskStorage({
-  destination: "/images/images",
+  destination: process.env.RAILWAY_VOLUME_MOUNT_PATH,
   filename: function (req, file, cb) {
     const uniqueName = `${uuidv4()}-${file.originalname}`;
     cb(null, uniqueName);
@@ -25,8 +25,14 @@ export const uploadImage = [
         message: "Error al cargar el archivo",
       });
     }
+    if (!process.env.RAILWAY_VOLUME_MOUNT_PATH) {
+      return res.status(500).json({ message: "No existe variable de entorno" });
+    }
 
-    const filePath = path.join("/images/images", req.file.filename);
+    const filePath = path.join(
+      process.env.RAILWAY_VOLUME_MOUNT_PATH,
+      req.file.filename
+    );
     const imageUrl = `${req.protocol}://${req.get("host")}${filePath}`;
 
     res.json({ message: "Archivo cargado con éxito", imageUrl: imageUrl });
