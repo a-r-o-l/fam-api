@@ -30,12 +30,13 @@ cron.schedule("0 1-10-18 * * *", async () => {
 });
 
 const app: Express = express();
+const volumeMountPath = process.env.RAILWAY_VOLUME_MOUNT_PATH || "/app/images";
+
 app.use(morgan("dev"));
 
 app.use(cors());
 
-console.log("index path => ", path.join(__dirname, "images"));
-app.use("/images", express.static(path.join(__dirname, "images")));
+app.use(volumeMountPath, express.static(volumeMountPath));
 
 app.use(express.json());
 app.use(buildingsRoutes);
