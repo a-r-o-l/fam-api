@@ -26,7 +26,11 @@ export const uploadImage = [
       return res.status(500).json({ message: "No existe variable de entorno" });
     }
 
-    const imageUrl = `https://fam-api-production.up.railway.app/${req.file.path}`;
-    res.json({ message: "Archivo cargado con éxito", imageUrl });
+    const imageUrl = `https://fam-api-production.up.railway.app${req.file.path}`;
+    res.json({
+      message: "Archivo cargado con éxito",
+      imageUrl,
+      file: req.file,
+    });
   },
 ];
