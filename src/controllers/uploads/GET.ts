@@ -7,7 +7,7 @@ export const getImages = async (req: Request, res: Response) => {
   try {
     const files = await fs.promises.readdir(directoryPath);
     const images = files.map(
-      (file) => `https://fam-api-production.up.railway.app/uploads/${file}`
+      (file) => `https://fam-api-production.up.railway.app/app/images/${file}`
     );
     res.json(images);
   } catch (err) {
