@@ -17,8 +17,19 @@ export const uploadImage = [
   upload.single("image"),
 
   (req: Request, res: Response) => {
+    console.log("file => ", req.file);
+    console.log("path => ", process.env.RAILWAY_VOLUME_MOUNT_PATH);
+
     if (!req.file || !process.env.RAILWAY_VOLUME_MOUNT_PATH) {
-      return res.status(500).json({ message: "Error al cargar el archivo" });
+      return res
+        .status(500)
+        .json({
+          message: "Error al cargar el archivo",
+          data: {
+            file: req.file || "",
+            env: process.env.RAILWAY_VOLUME_MOUNT_PATH || "",
+          },
+        });
     }
 
     const filePath = path.join(
