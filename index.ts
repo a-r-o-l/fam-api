@@ -34,6 +34,7 @@ app.use(morgan("dev"));
 
 app.use(cors());
 
+console.log("index path => ", path.join(__dirname, "images"));
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use(express.json());

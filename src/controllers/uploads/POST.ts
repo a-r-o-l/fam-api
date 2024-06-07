@@ -4,7 +4,7 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
 const storage = multer.diskStorage({
-  destination: process.env.RAILWAY_VOLUME_MOUNT_PATH,
+  destination: "/images/images",
   filename: function (req, file, cb) {
     const uniqueName = `${uuidv4()}-${file.originalname}`;
     cb(null, uniqueName);
@@ -26,11 +26,8 @@ export const uploadImage = [
       });
     }
 
-    const filePath = path.join(
-      process.env.RAILWAY_VOLUME_MOUNT_PATH || "/images",
-      req.file.filename
-    );
-    const imageUrl = `${req.protocol}://${req.get("host")}/${filePath}`;
+    const filePath = path.join("/images/images", req.file.filename);
+    const imageUrl = `${req.protocol}://${req.get("host")}${filePath}`;
 
     res.json({ message: "Archivo cargado con éxito", imageUrl: imageUrl });
   },
