@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { Request, Response } from "express";
 
-export const deleteImage = (req: Request, res: Response) => {
+export const deleteImage = async (req: Request, res: Response) => {
   if (!process.env.RAILWAY_VOLUME_MOUNT_PATH) {
     return res.status(500).json({ message: "No existe variable de entorno" });
   }
@@ -11,12 +11,11 @@ export const deleteImage = (req: Request, res: Response) => {
     req.params.imageUrl
   );
 
-  fs.unlink(imagePath, (err) => {
-    if (err) {
-      console.log(err);
-      res.status(500).send("Error al eliminar la imagen");
-    } else {
-      res.status(200).json({ message: "Imagen eliminada con éxito" });
-    }
-  });
+  try {
+    await fs.promises.unlink(imagePath);
+    res.status(200).json({ message: "Imagen eliminada con éxito" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Error al eliminar la imagen");
+  }
 };
