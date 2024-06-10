@@ -120,6 +120,10 @@ export const createAutomaticPayments = async () => {
         })) as unknown as PaymentAttributes[];
 
         if (!payments?.length) {
+          if (dayjs(contract.start_date).isAfter(dayjs())) {
+            continue;
+          }
+
           newsPayments.push({
             contractId: contract.id,
             renterId: contract.renterId,

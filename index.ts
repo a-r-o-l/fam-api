@@ -22,7 +22,7 @@ import dayjs from "dayjs";
 import path from "path";
 
 config();
-cron.schedule("0 1-10-18 * * *", async () => {
+cron.schedule("0 0 * * 0,4", async () => {
   console.log("se dispara cron");
   console.log(dayjs().format("YYYY-MM-DD HH:mm:ss"));
   await cleanExpiredContracts();
