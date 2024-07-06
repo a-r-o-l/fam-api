@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Apartment } from "../../models/Apartment";
 import { Renter } from "../../models/Renter";
 import { Contract } from "../../models/Contract";
+import { Upgrade } from "../../models/Upgrades";
 import { Op } from "sequelize";
 import dayjs from "dayjs";
 
@@ -37,6 +38,7 @@ export const createContract = async (req: Request, res: Response) => {
     renterId,
     apartmentId,
     isExpired,
+    months_upgrade,
   } = req.body;
   try {
     const foundApartment = (await Apartment.findByPk(
@@ -110,12 +112,25 @@ export const createContract = async (req: Request, res: Response) => {
       renterId,
       apartmentId,
       isExpired,
+      months_upgrade,
     });
 
     if (!newContract)
       return res.status(414).json({ message: "No se pudo crear el contrato" });
 
     const contractEndDate = dayjs(newContract.getDataValue("end_date"));
+    const montsUpgrade = newContract.getDataValue("months_upgrade");
+
+    if (montsUpgrade !== 0) {
+      const newUpgrade = await Upgrade.create({
+        contractId: newContract.getDataValue("id"),
+        startDate: newContract.getDataValue("start_date"),
+        endDate: newContract.getDataValue("end_date"),
+        newValue: newContract.getDataValue("value"),
+      });
+      if (!newUpgrade)
+        return res.status(414).json({ message: "No se pudo crear el upgrade" });
+    }
 
     if (dayjs(contractEndDate).isAfter(dayjs())) {
       foundApartment.rented = true;

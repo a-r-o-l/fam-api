@@ -2,6 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
 import { Renter } from "./Renter";
 import { Apartment } from "./Apartment";
+import { Upgrade } from "./Upgrades";
 
 export const Contract = sequelize.define(
   "Contract",
@@ -37,6 +38,11 @@ export const Contract = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    months_upgrade: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
   },
   {
     timestamps: true,
@@ -50,3 +56,6 @@ Contract.belongsTo(Apartment, { foreignKey: "apartmentId", targetKey: "id" });
 
 Renter.hasMany(Contract, { foreignKey: "renterId", sourceKey: "id" });
 Apartment.hasMany(Contract, { foreignKey: "apartmentId", sourceKey: "id" });
+
+Contract.hasMany(Upgrade, { foreignKey: "contractId" });
+Upgrade.belongsTo(Contract, { foreignKey: "contractId" });

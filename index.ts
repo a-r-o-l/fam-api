@@ -11,6 +11,7 @@ import paymentsRoutes from "./src/routes/payments.route";
 import analitycsRoutes from "./src/routes/analitycs.route";
 import apartmentsRoutes from "./src/routes/apartments.route";
 import contractsRoutes from "./src/routes/contracts.route";
+import upgradesRoutes from "./src/routes/upgrades.route";
 import uploadsRoutes from "./src/routes/uploads.route";
 import "./src/models/Building";
 import "./src/models/Renter";
@@ -45,6 +46,7 @@ app.use(paymentsRoutes);
 app.use(analitycsRoutes);
 app.use(apartmentsRoutes);
 app.use(contractsRoutes);
+app.use(upgradesRoutes);
 app.use(uploadsRoutes);
 
 const pool = new pg.Pool({

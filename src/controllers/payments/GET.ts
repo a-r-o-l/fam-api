@@ -15,10 +15,18 @@ type PaymentAttributes = {
 };
 
 export const getPayments = async (req: Request, res: Response) => {
+  let where = {};
+  const { renterId } = req.query;
+
+  if (renterId) {
+    where = { renterId };
+  }
+
   try {
     const payments = await Payment.findAll({
+      where,
       order: [
-        ["date", "DESC"],
+        ["date", "ASC"],
         ["id", "ASC"],
       ],
       include: [
