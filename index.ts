@@ -65,7 +65,7 @@ app.get("/ping", async (req: Request, res: Response) => {
 
 async function main() {
   try {
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ force: false });
     console.log("Connection has been established successfully.");
     app.listen(process.env.PORT, () => {
       console.log(`Server running on port ${process.env.PORT}`);
