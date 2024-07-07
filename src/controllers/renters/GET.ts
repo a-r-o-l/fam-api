@@ -3,7 +3,8 @@ import { Renter } from "../../models/Renter";
 import { Contract } from "../../models/Contract";
 import { Apartment } from "../../models/Apartment";
 import { Building } from "../../models/Building";
-import { Op } from "sequelize";
+import { Op, col } from "sequelize";
+import { Upgrade } from "../../models/Upgrades";
 
 type Renter = {
   name: string;
@@ -41,6 +42,10 @@ export const getRenters = async (req: Request, res: Response) => {
               as: "Contracts",
               include: [
                 {
+                  model: Upgrade,
+                  as: "Upgrades",
+                },
+                {
                   model: Apartment,
                   as: "Apartment",
 
@@ -54,6 +59,10 @@ export const getRenters = async (req: Request, res: Response) => {
               ],
             },
           ],
+          order: [
+            [col("Contracts.Apartment.buildingId"), "ASC"],
+            [col("Contracts.Apartment.number"), "ASC"],
+          ],
         });
         res.json(rentersByBuilding);
       }
@@ -64,6 +73,10 @@ export const getRenters = async (req: Request, res: Response) => {
             model: Contract,
             as: "Contracts",
             include: [
+              {
+                model: Upgrade,
+                as: "Upgrades",
+              },
               {
                 model: Apartment,
                 as: "Apartment",
@@ -76,6 +89,10 @@ export const getRenters = async (req: Request, res: Response) => {
               },
             ],
           },
+        ],
+        order: [
+          [col("Contracts.Apartment.buildingId"), "ASC"],
+          [col("Contracts.Apartment.number"), "ASC"],
         ],
       });
       res.json(renters);
@@ -96,6 +113,10 @@ export const getRenter = async (req: Request, res: Response) => {
             model: Contract,
             as: "Contracts",
             include: [
+              {
+                model: Upgrade,
+                as: "Upgrades",
+              },
               {
                 model: Apartment,
                 as: "Apartment",
@@ -122,6 +143,10 @@ export const getRenter = async (req: Request, res: Response) => {
           model: Contract,
           as: "Contracts",
           include: [
+            {
+              model: Upgrade,
+              as: "Upgrades",
+            },
             {
               model: Apartment,
               as: "Apartment",
@@ -154,6 +179,10 @@ export const getRenterByContract = async (req: Request, res: Response) => {
           model: Contract,
           as: "Contracts",
           include: [
+            {
+              model: Upgrade,
+              as: "Upgrades",
+            },
             {
               model: Apartment,
               as: "Apartment",

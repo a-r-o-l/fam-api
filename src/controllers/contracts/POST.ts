@@ -124,12 +124,12 @@ export const createContract = async (req: Request, res: Response) => {
     if (montsUpgrade !== 0) {
       const newUpgrade = await Upgrade.create({
         contractId: newContract.getDataValue("id"),
-        startDate: newContract.getDataValue("start_date"),
-        endDate: newContract.getDataValue("end_date"),
-        newValue: newContract.getDataValue("value"),
+        startDate: start_date,
+        endDate: dayjs(start_date)
+          .add(months_upgrade, "M")
+          .format("YYYY/MM/DD"),
+        newValue: value,
       });
-      if (!newUpgrade)
-        return res.status(414).json({ message: "No se pudo crear el upgrade" });
     }
 
     if (dayjs(contractEndDate).isAfter(dayjs())) {
@@ -144,6 +144,7 @@ export const createContract = async (req: Request, res: Response) => {
     }
     res.json(newContract);
   } catch (error: unknown) {
+    console.log(error);
     return res.status(500).json({ message: (error as Error).message });
   }
 };

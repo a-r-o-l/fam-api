@@ -23,7 +23,7 @@ const createAutomaticPayment = async () => {
             date: dayjs(renter.dataValues.start_date)
               .month(dayjs().month())
               .date(dayjs().date())
-              .format("YYYY-MM-DD"),
+              .format("YYYY/MM/DD"),
             amount: renter.dataValues.amount,
           });
           continue;
@@ -45,7 +45,7 @@ const createAutomaticPayment = async () => {
         ) {
           newsPayments.push({
             renterId: renter.dataValues.id,
-            date: dayjs().date(lastPayment.date()).format("YYYY-MM-DD"),
+            date: dayjs().date(lastPayment.date()).format("YYYY/MM/DD"),
             amount: renter.dataValues.amount,
           });
         }
