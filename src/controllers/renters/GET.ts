@@ -4,7 +4,6 @@ import { Contract } from "../../models/Contract";
 import { Apartment } from "../../models/Apartment";
 import { Building } from "../../models/Building";
 import { Op, col } from "sequelize";
-import { Upgrade } from "../../models/Upgrades";
 
 type Renter = {
   name: string;
@@ -12,7 +11,7 @@ type Renter = {
   dni: string;
   phone: string;
   apartment?: string;
-  buildingId?: number;
+  building_id?: number;
   fee?: string;
   image_url?: string;
   start_date: string;
@@ -22,7 +21,12 @@ type Renter = {
   email?: string;
 };
 
-export const getRenters = async (req: Request, res: Response) => {
+interface CustomRequest extends Request {
+  user?: any;
+}
+
+export const getRenters = async (req: CustomRequest, res: Response) => {
+  const accountId = req.user.id;
   try {
     if (!!req.query?.buildingId) {
       if (typeof req.query.buildingId === "string") {
@@ -31,20 +35,17 @@ export const getRenters = async (req: Request, res: Response) => {
         const rentersByBuilding = await Renter.findAll({
           where: {
             Apartment: {
-              buildingId: {
+              building_id: {
                 [Op.in]: numberIds,
               },
             },
+            account_id: accountId,
           },
           include: [
             {
               model: Contract,
               as: "Contracts",
               include: [
-                {
-                  model: Upgrade,
-                  as: "Upgrades",
-                },
                 {
                   model: Apartment,
                   as: "Apartment",
@@ -60,7 +61,7 @@ export const getRenters = async (req: Request, res: Response) => {
             },
           ],
           order: [
-            [col("Contracts.Apartment.buildingId"), "ASC"],
+            [col("Contracts.Apartment.building_id"), "ASC"],
             [col("Contracts.Apartment.number"), "ASC"],
           ],
         });
@@ -68,15 +69,12 @@ export const getRenters = async (req: Request, res: Response) => {
       }
     } else {
       const renters = await Renter.findAll({
+        where: { account_id: accountId },
         include: [
           {
             model: Contract,
             as: "Contracts",
             include: [
-              {
-                model: Upgrade,
-                as: "Upgrades",
-              },
               {
                 model: Apartment,
                 as: "Apartment",
@@ -91,7 +89,7 @@ export const getRenters = async (req: Request, res: Response) => {
           },
         ],
         order: [
-          [col("Contracts.Apartment.buildingId"), "ASC"],
+          [col("Contracts.Apartment.building_id"), "ASC"],
           [col("Contracts.Apartment.number"), "ASC"],
         ],
       });
@@ -102,21 +100,18 @@ export const getRenters = async (req: Request, res: Response) => {
   }
 };
 
-export const getRenter = async (req: Request, res: Response) => {
+export const getRenter = async (req: CustomRequest, res: Response) => {
+  const accountId = req.user.id;
   try {
-    if (req?.params?.activeContractId) {
-      const { activeContractId } = req.params;
+    if (req?.params?.active_contract_id) {
+      const { active_contract_id } = req.params;
       const foundRenter = await Renter.findOne({
-        where: { activeContractId },
+        where: { active_contract_id, account_id: accountId },
         include: [
           {
             model: Contract,
             as: "Contracts",
             include: [
-              {
-                model: Upgrade,
-                as: "Upgrades",
-              },
               {
                 model: Apartment,
                 as: "Apartment",
@@ -137,16 +132,12 @@ export const getRenter = async (req: Request, res: Response) => {
     }
     const { id } = req.params;
     const foundRenter = await Renter.findOne({
-      where: { id },
+      where: { id, account_id: accountId },
       include: [
         {
           model: Contract,
           as: "Contracts",
           include: [
-            {
-              model: Upgrade,
-              as: "Upgrades",
-            },
             {
               model: Apartment,
               as: "Apartment",
@@ -169,20 +160,20 @@ export const getRenter = async (req: Request, res: Response) => {
   }
 };
 
-export const getRenterByContract = async (req: Request, res: Response) => {
+export const getRenterByContract = async (
+  req: CustomRequest,
+  res: Response
+) => {
   try {
+    const accountId = req.user.id;
     const { activeContractId } = req.params;
     const foundRenter = await Renter.findOne({
-      where: { activeContractId },
+      where: { active_contract_id: activeContractId, account_id: accountId },
       include: [
         {
           model: Contract,
           as: "Contracts",
           include: [
-            {
-              model: Upgrade,
-              as: "Upgrades",
-            },
             {
               model: Apartment,
               as: "Apartment",

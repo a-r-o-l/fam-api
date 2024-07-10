@@ -7,7 +7,7 @@ type PaymentAttributes = {
   date?: string;
   payed?: boolean;
   receipt?: string;
-  contractId?: number;
+  contract_id?: number;
 };
 
 export const deletePayment = async (req: Request, res: Response) => {

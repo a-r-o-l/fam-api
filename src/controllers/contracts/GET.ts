@@ -2,11 +2,16 @@ import { Request, Response } from "express";
 import { Contract } from "../../models/Contract";
 import { Renter } from "../../models/Renter";
 import { Apartment } from "../../models/Apartment";
-import { Upgrade } from "../../models/Upgrades";
 
-export const getContracts = async (req: Request, res: Response) => {
+interface CustomRequest extends Request {
+  user?: any;
+}
+
+export const getContracts = async (req: CustomRequest, res: Response) => {
+  const accountId = req.user.id;
   try {
     const contracts = await Contract.findAll({
+      where: { account_id: accountId },
       include: [
         {
           model: Renter,
@@ -15,10 +20,6 @@ export const getContracts = async (req: Request, res: Response) => {
         {
           model: Apartment,
           as: "Apartment",
-        },
-        {
-          model: Upgrade,
-          as: "Upgrades",
         },
       ],
     });
@@ -28,12 +29,12 @@ export const getContracts = async (req: Request, res: Response) => {
   }
 };
 
-export const getContract = async (req: Request, res: Response) => {
+export const getContract = async (req: CustomRequest, res: Response) => {
+  const accountId = req.user.id;
   try {
     const { id } = req.params;
-    console.log("id=>", id);
     const foundContract = await Contract.findOne({
-      where: { id },
+      where: { id, account_id: accountId },
       include: [
         {
           model: Renter,
@@ -42,10 +43,6 @@ export const getContract = async (req: Request, res: Response) => {
         {
           model: Apartment,
           as: "Apartment",
-        },
-        {
-          model: Upgrade,
-          as: "Upgrades",
         },
       ],
     });

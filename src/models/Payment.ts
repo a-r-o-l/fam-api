@@ -27,26 +27,31 @@ export const Payment = sequelize.define(
       type: DataTypes.STRING(500),
       allowNull: true,
     },
-    contractId: {
+    contract_id: {
       type: DataTypes.INTEGER,
     },
-    renterId: {
+    renter_id: {
       type: DataTypes.INTEGER,
     },
-    apartmentId: {
+    apartment_id: {
       type: DataTypes.INTEGER,
     },
     payment_number: {
       type: DataTypes.INTEGER,
       defaultValue: 1,
     },
+    account_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   {
+    tableName: "Payment",
     timestamps: true,
     createdAt: true,
     updatedAt: true,
   }
 );
 
-Payment.belongsTo(Contract, { foreignKey: "contractId", targetKey: "id" });
-Contract.hasMany(Payment, { foreignKey: "contractId", sourceKey: "id" });
+Payment.belongsTo(Contract, { foreignKey: "contract_id", targetKey: "id" });
+Contract.hasMany(Payment, { foreignKey: "contract_id", sourceKey: "id" });

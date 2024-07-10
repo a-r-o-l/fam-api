@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
 import { Renter } from "../../models/Renter";
 
-export const createRenter = async (req: Request, res: Response) => {
+interface CustomRequest extends Request {
+  user?: any;
+}
+
+export const createRenter = async (req: CustomRequest, res: Response) => {
+  const accountId = req.user.id;
   const { name, lastname, email, dni, phone, image_url } = req.body;
   try {
     const newRenter = await Renter.create({
@@ -11,6 +16,7 @@ export const createRenter = async (req: Request, res: Response) => {
       phone,
       email,
       image_url,
+      account_id: accountId,
     });
     res.json(newRenter);
   } catch (error: unknown) {

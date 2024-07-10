@@ -11,8 +11,10 @@ import paymentsRoutes from "./src/routes/payments.route";
 import analitycsRoutes from "./src/routes/analitycs.route";
 import apartmentsRoutes from "./src/routes/apartments.route";
 import contractsRoutes from "./src/routes/contracts.route";
-import upgradesRoutes from "./src/routes/upgrades.route";
 import uploadsRoutes from "./src/routes/uploads.route";
+import LoginRoutes from "./src/routes/login.route";
+import accountRoutes from "./src/routes/accounts.route";
+import authenticateToken from "./src/middlewares/authMiddleware";
 import "./src/models/Building";
 import "./src/models/Renter";
 import {
@@ -40,14 +42,15 @@ app.use(cors());
 app.use(volumeMountPath, express.static(volumeMountPath));
 
 app.use(express.json());
-app.use(buildingsRoutes);
-app.use(rentersRoutes);
-app.use(paymentsRoutes);
-app.use(analitycsRoutes);
-app.use(apartmentsRoutes);
-app.use(contractsRoutes);
-app.use(upgradesRoutes);
-app.use(uploadsRoutes);
+app.use(LoginRoutes);
+app.use(accountRoutes);
+app.use(authenticateToken, buildingsRoutes);
+app.use(authenticateToken, rentersRoutes);
+app.use(authenticateToken, paymentsRoutes);
+app.use(authenticateToken, analitycsRoutes);
+app.use(authenticateToken, apartmentsRoutes);
+app.use(authenticateToken, contractsRoutes);
+app.use(authenticateToken, uploadsRoutes);
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -65,7 +68,7 @@ app.get("/ping", async (req: Request, res: Response) => {
 
 async function main() {
   try {
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ force: true });
     console.log("Connection has been established successfully.");
     app.listen(process.env.PORT, () => {
       console.log(`Server running on port ${process.env.PORT}`);

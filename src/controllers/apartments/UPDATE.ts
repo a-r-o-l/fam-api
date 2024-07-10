@@ -6,28 +6,22 @@ type ApartmentAttributes = {
   id?: number;
   number: string;
   rented: boolean;
-  buildingId?: number;
-  activeRenterId?: number;
+  building_id?: number;
+  active_renter_id?: number;
 };
 
 export const updateApartment = async (req: Request, res: Response) => {
   try {
-    const { number, rented, activeRenterId } = req.body;
+    const { number, rented, active_renter_id } = req.body;
     const { id } = req.params;
-    const foundApartment = (await Apartment.findByPk(
-      id
-    )) as Model<ApartmentAttributes> | null;
-    if (!foundApartment)
+    const [updatedRows] = await Apartment.update(
+      { number, rented, active_renter_id },
+      { where: { id } }
+    );
+    if (updatedRows === 0)
       return res.status(404).json({ message: "Apartment not found" });
-    if (number !== undefined)
-      (foundApartment as unknown as ApartmentAttributes).number = number;
-    if (rented !== undefined)
-      (foundApartment as unknown as ApartmentAttributes).rented = rented;
-    if (activeRenterId !== undefined)
-      (foundApartment as unknown as ApartmentAttributes).activeRenterId =
-        activeRenterId;
-    foundApartment.save();
-    res.json(foundApartment);
+    const updatedApartment = await Apartment.findByPk(id);
+    res.json(updatedApartment);
   } catch (error: unknown) {
     return res.status(500).json({ message: (error as Error).message });
   }

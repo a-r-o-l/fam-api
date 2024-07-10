@@ -9,9 +9,10 @@ type ApartmentAttributes = {
   id?: number;
   number?: string;
   rented?: boolean;
-  buildingId?: number;
-  activeContractId?: number | null;
-  activeRenterId?: number | null;
+  building_id?: number;
+  account_id?: number;
+  active_contract_id?: number | null;
+  active_renter_id?: number | null;
   save: () => void;
 };
 
@@ -23,8 +24,9 @@ type RenterAttributes = {
   phone?: string;
   email?: string;
   image_url?: string;
-  activeContractId: number | null;
-  activeApartmentId: number | null;
+  account_id?: number;
+  active_contract_id: number | null;
+  active_apartment_id: number | null;
   save: () => void;
 };
 
@@ -34,9 +36,10 @@ type ContractsAttributes = {
   value: number;
   start_date?: string;
   end_date?: string;
-  renterId?: number;
-  apartmentId?: number;
-  isExpired?: boolean;
+  renter_id?: number;
+  apartment_id?: number;
+  is_expired?: boolean;
+  account_id?: number;
   setDataValue: (key: string, value: boolean) => void;
   save: () => void;
 };
@@ -47,9 +50,10 @@ type PaymentAttributes = {
   date: string;
   payed: boolean | null;
   receipt?: string;
-  contractId?: number;
-  apartmentId?: number;
-  renterId?: number;
+  contract_id?: number;
+  apartment_id?: number;
+  renter_id?: number;
+  account_id?: number;
   payment_number?: number;
 };
 
@@ -66,26 +70,26 @@ export const cleanExpiredContracts = async () => {
     for (const contract of contracts) {
       const contractModel: any = contract;
       const apartment = (await Apartment.findByPk(
-        contractModel.apartmentId
+        contractModel.apartment_id
       )) as unknown as ApartmentAttributes;
 
       const renter = (await Renter.findByPk(
-        contractModel.renterId
+        contractModel.renter_id
       )) as unknown as RenterAttributes;
 
-      if (apartment.activeContractId === contractModel.id) {
-        apartment.activeContractId = null;
-        apartment.activeRenterId = null;
+      if (apartment.active_contract_id === contractModel.id) {
+        apartment.active_contract_id = null;
+        apartment.active_renter_id = null;
         apartment.rented = false;
         apartment.save();
       }
 
-      if (renter.activeContractId === contractModel.id) {
-        renter.activeContractId = null;
-        renter.activeApartmentId = null;
+      if (renter.active_contract_id === contractModel.id) {
+        renter.active_contract_id = null;
+        renter.active_apartment_id = null;
         renter.save();
       }
-      contractModel.isExpired = true;
+      contractModel.is_expired = true;
       contractModel.save();
     }
   } catch (error: unknown) {
@@ -100,7 +104,7 @@ export const createAutomaticPayments = async () => {
   try {
     const renters = await Renter.findAll({
       where: {
-        activeContractId: {
+        active_contract_id: {
           [Op.ne]: null,
         },
       },
@@ -108,14 +112,14 @@ export const createAutomaticPayments = async () => {
     for (const renterModel of renters) {
       const renter = renterModel.get() as RenterAttributes;
 
-      if (renter.activeContractId !== null) {
+      if (renter.active_contract_id !== null) {
         const contract = (await Contract.findByPk(
-          renter.activeContractId
+          renter.active_contract_id
         )) as unknown as ContractsAttributes;
 
         const payments = (await Payment.findAll({
           where: {
-            contractId: renter.activeContractId,
+            contract_id: renter.active_contract_id,
           },
         })) as unknown as PaymentAttributes[];
 
@@ -125,14 +129,15 @@ export const createAutomaticPayments = async () => {
           }
 
           newsPayments.push({
-            contractId: contract.id,
-            renterId: contract.renterId,
-            apartmentId: contract.apartmentId,
+            contract_id: contract.id,
+            renter_id: contract.renter_id,
+            apartment_id: contract.apartment_id,
             date: dayjs(contract.start_date)
               .month(currentMonth)
               .format("YYYY/MM/DD"),
             value: contract.value,
             payed: false,
+            account_id: contract.account_id,
           });
         } else {
           const latestPayment: any = payments.reduce(
@@ -149,15 +154,16 @@ export const createAutomaticPayments = async () => {
             lastPaymentMonth !== currentMonth
           ) {
             newsPayments.push({
-              contractId: contract.id,
+              contract_id: contract.id,
               date: dayjs(contract.start_date)
                 .month(currentMonth)
                 .format("YYYY/MM/DD"),
               value: contract.value,
-              renterId: contract.renterId,
-              apartmentId: contract.apartmentId,
+              renter_id: contract.renter_id,
+              apartment_id: contract.apartment_id,
               payment_number: latestPayment.payment_number + 1,
               payed: false,
+              account_id: contract.account_id,
             });
           }
         }

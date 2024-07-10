@@ -11,15 +11,22 @@ type PaymentAttributes = {
   date?: string;
   payed?: boolean;
   receipt?: string;
-  contractId?: number;
+  contract_id?: number;
 };
 
-export const getPayments = async (req: Request, res: Response) => {
+interface CustomRequest extends Request {
+  user?: any;
+}
+
+export const getPayments = async (req: CustomRequest, res: Response) => {
+  const accountId = req.user.id;
   let where = {};
   const { renterId } = req.query;
 
   if (renterId) {
-    where = { renterId };
+    where = { renter_id: renterId, account_id: accountId };
+  } else {
+    where = { account_id: accountId };
   }
 
   try {
@@ -58,10 +65,14 @@ export const getPayments = async (req: Request, res: Response) => {
   }
 };
 
-export const getPayment = async (req: Request, res: Response) => {
+export const getPayment = async (req: CustomRequest, res: Response) => {
+  const accountId = req.user.id;
+
   try {
     const { id } = req.params;
-    const foundPayment = await Payment.findOne({ where: { id } });
+    const foundPayment = await Payment.findOne({
+      where: { id, account_id: accountId },
+    });
     if (!foundPayment)
       return res.status(404).json({ message: "Payment not found" });
     res.json(foundPayment);

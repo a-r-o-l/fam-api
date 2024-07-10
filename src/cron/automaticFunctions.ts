@@ -14,12 +14,12 @@ const createAutomaticPayment = async () => {
         const currentMonth = dayjs().month();
         const existingsPayments = await Payment.findAll({
           where: {
-            renterId: renter.dataValues.id,
+            renter_id: renter.dataValues.id,
           },
         });
         if (!existingsPayments?.length) {
           newsPayments.push({
-            renterId: renter.dataValues.id,
+            renter_id: renter.dataValues.id,
             date: dayjs(renter.dataValues.start_date)
               .month(dayjs().month())
               .date(dayjs().date())
@@ -44,7 +44,7 @@ const createAutomaticPayment = async () => {
           lastPaymentMonth !== currentMonth
         ) {
           newsPayments.push({
-            renterId: renter.dataValues.id,
+            renter_id: renter.dataValues.id,
             date: dayjs().date(lastPayment.date()).format("YYYY/MM/DD"),
             amount: renter.dataValues.amount,
           });

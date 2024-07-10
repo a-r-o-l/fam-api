@@ -9,14 +9,21 @@ type PaymentAttributes = {
   date?: string;
   payed?: boolean;
   receipt?: string;
-  contractId?: number;
-  renterId?: number;
-  apartmentId?: number;
+  contract_id?: number;
+  renter_id?: number;
+  apartment_id?: number;
   payment_number?: number;
 };
 
-export const createPayment = async (req: Request, res: Response) => {
-  const { value, date, receipt, contractId, renterId, apartmentId } = req.body;
+interface CustomRequest extends Request {
+  user?: any;
+}
+
+export const createPayment = async (req: CustomRequest, res: Response) => {
+  const accountId = req.user.id;
+
+  const { value, date, receipt, contract_id, renter_id, apartment_id } =
+    req.body;
   try {
     const firstDayOfMonth = dayjs(date, "YYYY/MM/DD")
       .startOf("month")
@@ -24,10 +31,10 @@ export const createPayment = async (req: Request, res: Response) => {
     const lastDayOfMonth = dayjs(date, "YYYY/MM/DD")
       .endOf("month")
       .format("YYYY/MM/DD");
-    // Verificar que no existe ningún pago en el mismo mes que el que estamos por crear
     const existingPayment = await Payment.findOne({
       where: {
-        contractId,
+        account_id: accountId,
+        contract_id,
         date: {
           [Op.gte]: firstDayOfMonth,
           [Op.lte]: lastDayOfMonth,
@@ -40,21 +47,20 @@ export const createPayment = async (req: Request, res: Response) => {
         message: "Ya existe un pago de este contrato en el mismo mes.",
       });
     }
-    // Buscar el pago con el payment_number más grande para el contractId dado
     const lastPayment = (await Payment.findOne({
-      where: { contractId },
+      where: { contract_id, account_id: accountId },
       order: [["payment_number", "DESC"]],
     })) as PaymentAttributes;
     const payment_number = lastPayment?.payment_number
       ? lastPayment.payment_number + 1
       : 1;
     const newPayment = await Payment.create({
-      contractId,
+      contract_id,
       date,
       receipt,
       value,
-      renterId,
-      apartmentId,
+      renter_id,
+      apartment_id,
       payment_number,
     });
     res.json(newPayment);

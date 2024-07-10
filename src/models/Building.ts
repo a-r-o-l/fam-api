@@ -22,13 +22,18 @@ export const Building = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    account_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   {
+    tableName: "Building",
     timestamps: true,
     createdAt: true,
     updatedAt: true,
   }
 );
 
-Building.hasMany(Apartment, { foreignKey: "buildingId", sourceKey: "id" });
-Apartment.belongsTo(Building, { foreignKey: "buildingId", targetKey: "id" });
+Building.hasMany(Apartment, { foreignKey: "building_id", sourceKey: "id" });
+Apartment.belongsTo(Building, { foreignKey: "building_id", targetKey: "id" });

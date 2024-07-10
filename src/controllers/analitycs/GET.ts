@@ -7,13 +7,13 @@ import dayjs from "dayjs";
 
 interface IPayment {
   id: number;
-  renterId: number;
+  renter_id: number;
   paid: boolean;
   value: number;
   date: string;
   payed: boolean;
   receipt: string;
-  contractId: number;
+  contract_id: number;
   // otras propiedades...
   toJSON(): Object;
 }
@@ -36,7 +36,7 @@ export const getAnalitycs = async (req: Request, res: Response) => {
     for (let renter of renters) {
       const renterWithPayments = renter as unknown as IRenter;
       const renterPayments = payments.filter(
-        (payment: IPayment) => payment.renterId === renterWithPayments.id
+        (payment: IPayment) => payment.renter_id === renterWithPayments.id
       );
 
       // renter.setDataValue(
@@ -67,13 +67,13 @@ export const getPaymentsbyTime = async (req: Request, res: Response) => {
   try {
     const year = req?.params?.year;
     if (year) {
-      const startDate = dayjs(year).startOf("year").toDate();
-      const endDate = dayjs(year).endOf("year").toDate();
+      const start_date = dayjs(year).startOf("year").toDate();
+      const end_date = dayjs(year).endOf("year").toDate();
 
       const payments = await Payment.findAll({
         where: {
           date: {
-            [Op.between]: [startDate, endDate],
+            [Op.between]: [start_date, end_date],
           },
         },
       });

@@ -9,8 +9,8 @@ type Renter = {
   phone: string;
   image_url?: string;
   email?: string;
-  activeApartmentId?: number;
-  activeContractId?: number;
+  active_apartment_id?: number;
+  active_contract_id?: number;
 };
 
 export const updateRenter = async (req: Request, res: Response) => {
@@ -22,30 +22,28 @@ export const updateRenter = async (req: Request, res: Response) => {
       phone,
       image_url,
       email,
-      activeApartmentId,
-      activeContractId,
+      active_apartment_id,
+      active_contract_id,
     } = req.body;
     const { id } = req.params;
 
-    const foundRenter = (await Renter.findByPk(id)) as Model<Renter> | null;
+    const foundRenter = await Renter.findByPk(id);
     if (!foundRenter) {
       return res.status(404).json({ message: "Renter not found" });
     }
 
-    if (name !== undefined) (foundRenter as unknown as Renter).name = name;
-    if (lastname !== undefined)
-      (foundRenter as unknown as Renter).lastname = lastname;
-    if (dni !== undefined) (foundRenter as unknown as Renter).dni = dni;
-    if (phone !== undefined) (foundRenter as unknown as Renter).phone = phone;
-    if (image_url !== undefined)
-      (foundRenter as unknown as Renter).image_url = image_url;
-    if (email !== undefined) (foundRenter as unknown as Renter).email = email;
-    if (activeApartmentId !== undefined)
-      (foundRenter as unknown as Renter).activeApartmentId = activeApartmentId;
-    if (activeContractId !== undefined)
-      (foundRenter as unknown as Renter).activeContractId = activeContractId;
+    const updateData = {
+      ...(name !== undefined && { name }),
+      ...(lastname !== undefined && { lastname }),
+      ...(dni !== undefined && { dni }),
+      ...(phone !== undefined && { phone }),
+      ...(image_url !== undefined && { image_url }),
+      ...(email !== undefined && { email }),
+      ...(active_apartment_id !== undefined && { active_apartment_id }),
+      ...(active_contract_id !== undefined && { active_contract_id }),
+    };
 
-    foundRenter.save();
+    await foundRenter.update(updateData);
 
     res.json(foundRenter);
   } catch (error: unknown) {

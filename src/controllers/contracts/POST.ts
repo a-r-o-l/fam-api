@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { Apartment } from "../../models/Apartment";
 import { Renter } from "../../models/Renter";
 import { Contract } from "../../models/Contract";
-import { Upgrade } from "../../models/Upgrades";
 import { Op } from "sequelize";
 import dayjs from "dayjs";
 
@@ -10,9 +9,9 @@ type ApartmentAttributes = {
   id?: number;
   number?: string;
   rented?: boolean;
-  buildingId?: number;
-  activeContractId?: number;
-  activeRenterId?: number;
+  building_id?: number;
+  active_contract_id?: number;
+  active_renter_id?: number;
   save: () => void;
 };
 
@@ -24,38 +23,44 @@ type RenterAttributes = {
   phone?: string;
   email?: string;
   image_url?: string;
-  activeContractId?: number;
-  activeApartmentId?: number;
+  active_contract_id?: number;
+  active_apartment_id?: number;
   save: () => void;
 };
 
-export const createContract = async (req: Request, res: Response) => {
+interface CustomRequest extends Request {
+  user?: any;
+}
+
+export const createContract = async (req: CustomRequest, res: Response) => {
+  const accountId = req.user.id;
   const {
     months_amount,
     value,
     start_date,
     end_date,
-    renterId,
-    apartmentId,
-    isExpired,
+    renter_id,
+    apartment_id,
+    is_expired,
     months_upgrade,
   } = req.body;
   try {
     const foundApartment = (await Apartment.findByPk(
-      apartmentId
+      apartment_id
     )) as ApartmentAttributes;
     if (!foundApartment) {
       return res.status(414).json({ message: "Apartamento no encontrado" });
     }
 
-    const foundRenter = (await Renter.findByPk(renterId)) as RenterAttributes;
+    const foundRenter = (await Renter.findByPk(renter_id)) as RenterAttributes;
     if (!foundRenter) {
       return res.status(414).json({ message: "Inquilino no encontrado" });
     }
 
     const foundContracts = await Contract.findOne({
       where: {
-        apartmentId,
+        account_id: accountId,
+        apartment_id: apartment_id,
         [Op.or]: [
           {
             start_date: {
@@ -85,20 +90,17 @@ export const createContract = async (req: Request, res: Response) => {
       },
     });
 
-    //the apartment has or had a contract with the same date
     if (foundContracts) {
       return res
         .status(414)
         .json({ message: "ya existe un contrato con la misma fecha" });
     }
-    //the apartment has rented field in true
-    if (foundApartment.activeContractId) {
+    if (foundApartment.active_contract_id) {
       return res
         .status(414)
         .json({ message: "El apartamento ya esta alquilado" });
     }
-    //the renter has activeContractId
-    if (foundRenter.activeContractId) {
+    if (foundRenter.active_contract_id) {
       return res
         .status(414)
         .json({ message: "El inquilino ya tiene un contrato" });
@@ -109,36 +111,28 @@ export const createContract = async (req: Request, res: Response) => {
       value,
       start_date,
       end_date,
-      renterId,
-      apartmentId,
-      isExpired,
+      renter_id,
+      apartment_id,
+      is_expired,
       months_upgrade,
+      account_id: accountId,
+      upgrade_value: !months_upgrade ? null : value,
+      upgrade_start_date: !months_upgrade ? null : start_date,
+      upgrade_end_date: !months_upgrade
+        ? null
+        : dayjs(start_date).add(months_upgrade, "M").format("YYYY/MM/DD"),
     });
 
     if (!newContract)
       return res.status(414).json({ message: "No se pudo crear el contrato" });
 
-    const contractEndDate = dayjs(newContract.getDataValue("end_date"));
-    const montsUpgrade = newContract.getDataValue("months_upgrade");
-
-    if (montsUpgrade !== 0) {
-      const newUpgrade = await Upgrade.create({
-        contractId: newContract.getDataValue("id"),
-        startDate: start_date,
-        endDate: dayjs(start_date)
-          .add(months_upgrade, "M")
-          .format("YYYY/MM/DD"),
-        newValue: value,
-      });
-    }
-
-    if (dayjs(contractEndDate).isAfter(dayjs())) {
+    if (dayjs(end_date).isAfter(dayjs())) {
       foundApartment.rented = true;
-      foundApartment.activeContractId = newContract.getDataValue("id");
-      foundApartment.activeRenterId = renterId;
+      foundApartment.active_contract_id = newContract.getDataValue("id");
+      foundApartment.active_renter_id = renter_id;
 
-      foundRenter.activeContractId = newContract.getDataValue("id");
-      foundRenter.activeApartmentId = apartmentId;
+      foundRenter.active_contract_id = newContract.getDataValue("id");
+      foundRenter.active_apartment_id = apartment_id;
       foundRenter.save();
       foundApartment.save();
     }

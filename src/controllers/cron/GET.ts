@@ -9,7 +9,7 @@ export const test = async () => {
   const rentersByBuilding = await Renter.findAll({
     where: {
       Apartment: {
-        BuildingId: 2,
+        Building_id: 2,
       },
     },
     include: [

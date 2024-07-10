@@ -12,8 +12,9 @@ type BuildingAttributes = {
 
 interface ApartmentAttributes {
   number: number;
-  buildingId: number;
+  building_id: number;
   rented: boolean;
+  destroy: () => void;
 }
 
 interface BuildingCreationAttributes
@@ -28,25 +29,18 @@ export interface BuildingType
 export const updateBuilding = async (req: Request, res: Response) => {
   try {
     const { name, address, apartments } = req.body;
-
     const { id } = req.params;
-    const foundBuilding = (await Building.findByPk(
-      id
-    )) as Model<BuildingAttributes> | null;
+
+    const foundBuilding = await Building.findByPk(id);
     if (!foundBuilding)
-      return res.status(404).json({ message: "Build not found" });
-    (foundBuilding as unknown as BuildingAttributes).name = name;
-    (foundBuilding as unknown as BuildingAttributes).address = address;
-    (foundBuilding as unknown as BuildingAttributes).apartments = apartments;
-    foundBuilding.save();
+      return res.status(404).json({ message: "Building not found" });
+
+    await foundBuilding.update({ name, address, apartments });
 
     const currentApartments = await Apartment.findAll({
-      where: {
-        buildingId: req.params.id,
-      },
+      where: { building_id: id },
     });
 
-    console.log(currentApartments);
     if (apartments !== currentApartments.length && apartments > 0) {
       const maxI =
         apartments > currentApartments.length
@@ -54,10 +48,9 @@ export const updateBuilding = async (req: Request, res: Response) => {
           : currentApartments.length;
 
       for (let i = 1; i <= maxI; i++) {
-        const exist: any = currentApartments.find((a) => {
-          const numb = a.get("number");
-          return numb === i.toString();
-        });
+        const exist = currentApartments.find(
+          (a) => a.get("number") === i.toString()
+        ) as ApartmentAttributes | undefined;
         if (exist) {
           if (i <= apartments) {
             continue;
@@ -68,19 +61,19 @@ export const updateBuilding = async (req: Request, res: Response) => {
                 .status(410)
                 .json({ message: "Cannot delete rented apartment" });
             }
-            await exist.destroy();
+            exist.destroy();
           }
         } else {
           await Apartment.create({
             number: `${i}`,
-            buildingId: foundBuilding.getDataValue("id"),
+            building_id: foundBuilding.getDataValue("id"),
           });
         }
       }
     }
 
     res.json(foundBuilding);
-  } catch (error: unknown) {
+  } catch (error) {
     return res.status(500).json({ message: (error as Error).message });
   }
 };

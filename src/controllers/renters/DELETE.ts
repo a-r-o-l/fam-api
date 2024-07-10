@@ -8,7 +8,7 @@ type Renter = {
   dni: string;
   phone: string;
   apartment?: string;
-  buildingId?: number;
+  building_id?: number;
   fee?: string;
   image_url?: string;
   start_date: string;
@@ -21,7 +21,7 @@ type Renter = {
 export const deleteRenter = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const contracts = await Contract.findAll({ where: { renterId: id } });
+    const contracts = await Contract.findAll({ where: { renter_id: id } });
     if (contracts.length > 0) {
       return res
         .status(410)

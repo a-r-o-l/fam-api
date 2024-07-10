@@ -17,19 +17,24 @@ export const Apartment = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    buildingId: {
+    building_id: {
       type: DataTypes.INTEGER,
     },
-    activeContractId: {
+    active_contract_id: {
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
-    activeRenterId: {
+    active_renter_id: {
       type: DataTypes.INTEGER,
       defaultValue: null,
+    },
+    account_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
   },
   {
+    tableName: "Apartment",
     timestamps: true,
     createdAt: true,
     updatedAt: true,

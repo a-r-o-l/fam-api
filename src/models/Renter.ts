@@ -34,16 +34,21 @@ export const Renter = sequelize.define(
       type: DataTypes.STRING(500),
       allowNull: true,
     },
-    activeContractId: {
+    active_contract_id: {
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
-    activeApartmentId: {
+    active_apartment_id: {
       type: DataTypes.INTEGER,
       defaultValue: null,
+    },
+    account_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
   },
   {
+    tableName: "Renter",
     timestamps: true,
     createdAt: true,
     updatedAt: true,

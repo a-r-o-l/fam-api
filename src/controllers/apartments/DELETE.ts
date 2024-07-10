@@ -5,7 +5,7 @@ type ApartmentAttributes = {
   id?: number;
   number: string;
   rented: boolean;
-  buildingId?: number;
+  building_id?: number;
 };
 export const deleteApartment = async (req: Request, res: Response) => {
   try {

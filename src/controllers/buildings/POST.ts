@@ -19,18 +19,25 @@ export interface BuildingType
   updatedAt?: Date;
 }
 
-export const createBuilding = async (req: Request, res: Response) => {
+interface CustomRequest extends Request {
+  user?: any;
+}
+
+export const createBuilding = async (req: CustomRequest, res: Response) => {
   const { name, address, apartments } = req.body;
+  const accountId = req.user.id;
   try {
     const newBuilding: BuildingType = await Building.create({
       name,
       address,
       apartments,
+      account_id: accountId,
     });
     for (let i = 1; i <= apartments; i++) {
       await Apartment.create({
         number: `${i}`,
-        buildingId: newBuilding.getDataValue("id"),
+        building_id: newBuilding.getDataValue("id"),
+        account_id: accountId,
       });
     }
     res.json(newBuilding);

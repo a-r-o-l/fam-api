@@ -9,17 +9,17 @@ type ContractsAttributes = {
   value: number;
   start_date: string;
   end_date: string;
-  renterId: number;
-  apartmentId: number;
-  isExpired?: boolean;
+  renter_id: number;
+  apartment_id: number;
+  is_expired?: boolean;
 };
 
 type ApartmentAttributes = {
   id?: number;
   number?: string;
   rented?: boolean;
-  buildingId?: number;
-  activeContractId?: number | null;
+  building_id?: number;
+  active_contract_id?: number | null;
   save: () => void;
 };
 
@@ -31,7 +31,7 @@ type RenterAttributes = {
   phone?: string;
   email?: string;
   image_url?: string;
-  activeContractId?: number | null;
+  active_contract_id?: number | null;
   save: () => void;
 };
 
@@ -43,20 +43,20 @@ export const deleteContract = async (req: Request, res: Response) => {
     )) as unknown as ContractsAttributes;
 
     const renter = (await Renter.findByPk(
-      contract?.renterId
+      contract?.renter_id
     )) as unknown as RenterAttributes;
 
     const apartment = (await Apartment.findByPk(
-      contract?.apartmentId
+      contract?.apartment_id
     )) as unknown as ApartmentAttributes;
 
-    if (renter.activeContractId == Number(id)) {
-      renter.activeContractId = null;
+    if (renter.active_contract_id == Number(id)) {
+      renter.active_contract_id = null;
       renter.save();
     }
 
-    if (apartment.activeContractId == Number(id)) {
-      apartment.activeContractId = null;
+    if (apartment.active_contract_id == Number(id)) {
+      apartment.active_contract_id = null;
       apartment.save();
     }
     await Contract.destroy({ where: { id } });
