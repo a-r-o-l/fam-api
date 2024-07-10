@@ -5,25 +5,25 @@ import bcrypt from "bcrypt";
 export const createAccount = async (req: Request, res: Response) => {
   try {
     const { user_name, email, image_url, role, verified, password } = req.body;
-    const existingAccount = await Account.findOne({
-      where: {
-        $or: [{ email: req.body?.email }, { user_name: req.body?.user_name }],
-      },
-    });
+    // const existingAccount = await Account.findOne({
+    //   where: {
+    //     $or: [{ email: req.body?.email }, { user_name: req.body?.user_name }],
+    //   },
+    // });
 
-    if (existingAccount) {
-      return res.status(400).json({
-        message: "Account already exists with the given email or username.",
-      });
-    }
+    // if (existingAccount) {
+    //   return res.status(400).json({
+    //     message: "Account already exists with the given email or username.",
+    //   });
+    // }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const newAccount = await Account.create({
-      user_name,
-      email,
-      image_url,
-      role,
-      verified,
+      user_name: user_name,
+      email: email ? email : "",
+      image_url: image_url ? image_url : "",
+      role: role ? role : "user",
+      verified: verified ? verified : false,
       password: hashedPassword,
     });
 
