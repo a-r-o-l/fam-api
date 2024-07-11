@@ -13,7 +13,7 @@ type PaymentAttributes = {
 
 export const updatePayment = async (req: Request, res: Response) => {
   try {
-    const { contract_id, value, date, receipt, payed } = req.body;
+    const { value, date, receipt, payed } = req.body;
     const { id } = req.params;
     const foundPayment = (await Payment.findByPk(
       id
@@ -23,11 +23,10 @@ export const updatePayment = async (req: Request, res: Response) => {
     }
 
     const updateData = {
-      ...(contract_id !== undefined && { contract_id }),
-      ...(date !== undefined && { date }),
       ...(value !== undefined && { value }),
-      ...(receipt !== undefined && { receipt }),
+      ...(date !== undefined && { date }),
       ...(payed !== undefined && { payed }),
+      ...(receipt !== undefined && { receipt }),
     };
 
     await foundPayment.update(updateData);

@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { Apartment } from "../../models/Apartment";
-import { Model } from "sequelize";
 
 type ApartmentAttributes = {
   id?: number;
@@ -12,10 +11,10 @@ type ApartmentAttributes = {
 
 export const updateApartment = async (req: Request, res: Response) => {
   try {
-    const { number, rented, active_renter_id } = req.body;
+    const { number, rented, active_renter_id, active_contract_id } = req.body;
     const { id } = req.params;
     const [updatedRows] = await Apartment.update(
-      { number, rented, active_renter_id },
+      { number, rented, active_renter_id, active_contract_id },
       { where: { id } }
     );
     if (updatedRows === 0)

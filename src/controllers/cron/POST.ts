@@ -39,6 +39,7 @@ type ContractsAttributes = {
   renter_id?: number;
   apartment_id?: number;
   is_expired?: boolean;
+  upgrade_value: number;
   account_id?: number;
   setDataValue: (key: string, value: boolean) => void;
   save: () => void;
@@ -102,6 +103,7 @@ export const createAutomaticPayments = async () => {
   let newsPayments: PaymentAttributes[] = [];
   const currentMonth = dayjs().month();
   try {
+    ``;
     const renters = await Renter.findAll({
       where: {
         active_contract_id: {
@@ -135,7 +137,10 @@ export const createAutomaticPayments = async () => {
             date: dayjs(contract.start_date)
               .month(currentMonth)
               .format("YYYY/MM/DD"),
-            value: contract.value,
+            value:
+              contract.months_amount !== 0
+                ? contract.upgrade_value
+                : contract.value,
             payed: false,
             account_id: contract.account_id,
           });
@@ -158,7 +163,10 @@ export const createAutomaticPayments = async () => {
               date: dayjs(contract.start_date)
                 .month(currentMonth)
                 .format("YYYY/MM/DD"),
-              value: contract.value,
+              value:
+                contract.months_amount !== 0
+                  ? contract.upgrade_value
+                  : contract.value,
               renter_id: contract.renter_id,
               apartment_id: contract.apartment_id,
               payment_number: latestPayment.payment_number + 1,

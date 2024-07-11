@@ -11,6 +11,10 @@ export const updateContract = async (req: Request, res: Response) => {
       renter_id,
       apartment_id,
       is_expired,
+      months_upgrade,
+      upgrade_value,
+      upgrade_start_date,
+      upgrade_end_date,
     } = req.body;
     const { id } = req.params;
     const foundContract = await Contract.findByPk(id);
@@ -27,6 +31,10 @@ export const updateContract = async (req: Request, res: Response) => {
       renter_id,
       apartment_id,
       is_expired,
+      months_upgrade,
+      upgrade_value,
+      upgrade_start_date,
+      upgrade_end_date,
     });
 
     res.json(foundContract);
