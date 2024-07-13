@@ -39,6 +39,10 @@ export const Account = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    googleId: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+    },
   },
   {
     tableName: "Account",
