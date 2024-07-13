@@ -12,6 +12,7 @@ interface AccountInstance extends Model {
   email: string;
   role: string;
   verified: boolean;
+  image_url: string;
 }
 
 interface IRefreshToken {
@@ -44,10 +45,11 @@ export const loginUser = async (req: Request, res: Response) => {
     const accessToken = jwt.sign(
       {
         id: user.id,
-        email: user.email,
         user_name: user.user_name,
+        email: user.email,
         verified: user.verified,
         role: user.role,
+        image_url: user.image_url,
       },
       secret,
       { expiresIn: "5h" }

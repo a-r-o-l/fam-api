@@ -46,6 +46,11 @@ export const Renter = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    hidden: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: true,
+    },
   },
   {
     tableName: "Renter",

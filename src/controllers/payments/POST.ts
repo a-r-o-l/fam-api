@@ -22,7 +22,7 @@ interface CustomRequest extends Request {
 export const createPayment = async (req: CustomRequest, res: Response) => {
   const accountId = req.user.id;
 
-  const { value, date, receipt, contract_id, renter_id, apartment_id } =
+  const { value, date, receipt, contract_id, renter_id, apartment_id, payed } =
     req.body;
   try {
     const firstDayOfMonth = dayjs(date, "YYYY/MM/DD")
@@ -62,6 +62,8 @@ export const createPayment = async (req: CustomRequest, res: Response) => {
       renter_id,
       apartment_id,
       payment_number,
+      account_id: accountId,
+      payed: payed || false,
     });
     res.json(newPayment);
   } catch (error: unknown) {
