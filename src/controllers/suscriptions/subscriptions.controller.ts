@@ -31,6 +31,7 @@ export const createPreference = async (req: Request, res: Response) => {
       pending: pendingUrl,
     },
     auto_return: "approved",
+    webhook: "https://fam-api-production.up.railway.app/webhook",
   };
 
   try {
@@ -92,4 +93,9 @@ export const deleteSubscriptions = async (
   } catch (error: unknown) {
     return res.status(500).json({ message: (error as Error).message });
   }
+};
+
+export const webhook = async (req: Request, res: Response) => {
+  console.log(req.body);
+  res.json({ message: "webhook received" });
 };
