@@ -6,6 +6,11 @@ interface CustomRequest extends Request {
   user?: any;
 }
 
+const MpAccessToken = process.env.MP_ACCESS_TOKEN as string;
+const successUrl = process.env.MP_SUCCESS_URL as string;
+const failureUrl = process.env.MP_FAILURE_URL as string;
+const pendingUrl = process.env.MP_PENDING_URL as string;
+
 export const createPreference = async (req: Request, res: Response) => {
   const { title, unit_price, description, id } = req.body;
 
@@ -21,20 +26,16 @@ export const createPreference = async (req: Request, res: Response) => {
       },
     ],
     back_urls: {
-      success:
-        "https://fam-client-production.up.railway.app/subscriptions/success",
-      failure:
-        "https://fam-client-production.up.railway.app/subscriptions/failure",
-      pending:
-        "https://fam-client-production.up.railway.app/subscriptions/pending",
+      success: successUrl,
+      failure: failureUrl,
+      pending: pendingUrl,
     },
     auto_return: "approved",
   };
 
   try {
     const client = new MercadoPagoConfig({
-      accessToken:
-        "APP_USR-5726323322571746-071718-d77d075e705b6fb36c3d9c6399cc8940-1907117420",
+      accessToken: MpAccessToken,
     });
 
     const preference = new Preference(client);
@@ -69,6 +70,7 @@ export const getSubscriptions = async (req: CustomRequest, res: Response) => {
   try {
     const subscriptions = await Subscription.findAll({
       where: { account_id: accountId },
+      order: [["end_date", "DESC"]],
     });
     res.json(subscriptions);
   } catch (error: unknown) {
@@ -86,7 +88,7 @@ export const deleteSubscriptions = async (
     await Subscription.destroy({
       where: { id: subscriptionId, account_id: accountId },
     });
-    res.json({ message: "Subscriptions deleted" });
+    res.json({ message: "Suscripcion eliminada correctamente" });
   } catch (error: unknown) {
     return res.status(500).json({ message: (error as Error).message });
   }
