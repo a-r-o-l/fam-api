@@ -75,3 +75,19 @@ export const getSubscriptions = async (req: CustomRequest, res: Response) => {
     return res.status(500).json({ message: (error as Error).message });
   }
 };
+
+export const deleteSubscriptions = async (
+  req: CustomRequest,
+  res: Response
+) => {
+  const accountId = req.user.id;
+  const { subscriptionId } = req.params;
+  try {
+    await Subscription.destroy({
+      where: { id: subscriptionId, account_id: accountId },
+    });
+    res.json({ message: "Subscriptions deleted" });
+  } catch (error: unknown) {
+    return res.status(500).json({ message: (error as Error).message });
+  }
+};

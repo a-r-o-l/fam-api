@@ -5,6 +5,7 @@ import { Account } from "../../models/Account";
 import { RefreshToken } from "../../models/RefreshToken";
 import { Model } from "sequelize";
 import { Subscription } from "../../models/Subscription";
+import dayjs from "dayjs";
 
 interface AccountInstance extends Model {
   id: number;
@@ -27,6 +28,9 @@ const secret = process.env.JWT_SECRET as string;
 const refreshSecret = process.env.REFRESH_SECRET as string;
 
 export const loginUser = async (req: Request, res: Response) => {
+  const today = dayjs();
+  let subscriptionStatus = "expired"; // Default status
+
   try {
     const { user_name, password, googleId } = req.body;
 
@@ -43,10 +47,17 @@ export const loginUser = async (req: Request, res: Response) => {
 
     if (user.Subscriptions?.length) {
       user.Subscriptions.sort((a: any, b: any) => {
-        const endDateA = new Date(a.endDate).getTime();
-        const endDateB = new Date(b.endDate).getTime();
-        return endDateB - endDateA; // Orden descendente por endDate
+        const endDateA = dayjs(a.end_date).valueOf();
+        const endDateB = dayjs(b.end_date).valueOf();
+        return endDateB - endDateA;
       });
+      const mostRecentSubscription: any = user.Subscriptions[0];
+      const endDate = dayjs(mostRecentSubscription.end_date);
+      const today = dayjs();
+
+      if (today.isBefore(endDate)) {
+        subscriptionStatus = "active";
+      }
     }
 
     if (!googleId) {
@@ -66,6 +77,7 @@ export const loginUser = async (req: Request, res: Response) => {
         role: user.role,
         image_url: user.image_url,
         Subscriptions: user.Subscriptions,
+        status: subscriptionStatus,
       },
       secret,
       { expiresIn: "5h" }
