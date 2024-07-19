@@ -14,6 +14,7 @@ import contractsRoutes from "./src/routes/contracts.route";
 import uploadsRoutes from "./src/routes/uploads.route";
 import LoginRoutes from "./src/routes/login.route";
 import accountRoutes from "./src/routes/accounts.route";
+import subscriptionsRoutes from "./src/routes/subscriptions.route";
 import authenticateToken from "./src/middlewares/authMiddleware";
 import "./src/models/Building";
 import "./src/models/Renter";
@@ -44,6 +45,7 @@ app.use(volumeMountPath, express.static(volumeMountPath));
 app.use(express.json());
 app.use(LoginRoutes);
 app.use(accountRoutes);
+app.use(authenticateToken, subscriptionsRoutes);
 app.use(authenticateToken, buildingsRoutes);
 app.use(authenticateToken, rentersRoutes);
 app.use(authenticateToken, paymentsRoutes);
@@ -68,7 +70,7 @@ app.get("/ping", async (req: Request, res: Response) => {
 
 async function main() {
   try {
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ force: true });
     console.log("Connection has been established successfully.");
     app.listen(process.env.PORT, () => {
       console.log(`Server running on port ${process.env.PORT}`);

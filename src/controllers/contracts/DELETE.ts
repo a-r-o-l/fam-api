@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Contract } from "../../models/Contract";
 import { Renter } from "../../models/Renter";
 import { Apartment } from "../../models/Apartment";
+import { Payment } from "../../models/Payment";
 
 type ContractsAttributes = {
   id: number;
@@ -12,6 +13,7 @@ type ContractsAttributes = {
   renter_id: number;
   apartment_id: number;
   is_expired?: boolean;
+  update: (data: any) => void;
 };
 
 type ApartmentAttributes = {
@@ -20,7 +22,9 @@ type ApartmentAttributes = {
   rented?: boolean;
   building_id?: number;
   active_contract_id?: number | null;
+  active_renter_id?: number | null;
   save: () => void;
+  update: (data: any) => void;
 };
 
 type RenterAttributes = {
@@ -32,7 +36,9 @@ type RenterAttributes = {
   email?: string;
   image_url?: string;
   active_contract_id?: number | null;
+  active_apartment_id?: number | null;
   save: () => void;
+  update: (data: any) => void;
 };
 
 export const deleteContract = async (req: Request, res: Response) => {
@@ -50,16 +56,25 @@ export const deleteContract = async (req: Request, res: Response) => {
       contract?.apartment_id
     )) as unknown as ApartmentAttributes;
 
-    if (renter.active_contract_id == Number(id)) {
-      renter.active_contract_id = null;
-      renter.save();
-    }
+    const payments = await Payment.findAll({
+      where: { contract_id: id },
+    });
 
-    if (apartment.active_contract_id == Number(id)) {
-      apartment.active_contract_id = null;
-      apartment.save();
+    renter.update({
+      active_contract_id: null,
+      active_apartment_id: null,
+    });
+
+    apartment.update({
+      active_contract_id: null,
+      rented: false,
+      active_renter_id: null,
+    });
+    if (payments.length) {
+      contract.update({ is_cancelled: true });
+    } else {
+      await Contract.destroy({ where: { id } });
     }
-    await Contract.destroy({ where: { id } });
     res.sendStatus(204);
   } catch (error: unknown) {
     return res.status(500).json({ message: (error as Error).message });

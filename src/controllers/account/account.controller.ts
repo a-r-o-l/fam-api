@@ -5,11 +5,15 @@ import { Op, where } from "sequelize";
 
 export const createAccount = async (req: Request, res: Response) => {
   try {
-    const { user_name, email, role, verified, password, image_url } = req.body;
+    const { user_name, email, role, verified, password, image_url, googleId } =
+      req.body;
 
     const existingAccount = await Account.findOne({
       where: {
-        [Op.or]: [{ email }, { user_name }],
+        [Op.or]: [
+          ...(email ? [{ email }] : []),
+          ...(user_name ? [{ user_name }] : []),
+        ],
       },
     });
 
@@ -17,6 +21,17 @@ export const createAccount = async (req: Request, res: Response) => {
       return res.status(400).json({
         message: "Account already exists with the given email or username.",
       });
+    }
+    if (googleId) {
+      const newAccount = await Account.create({
+        email: email || "",
+        image_url: image_url || "",
+        role: role || "user",
+        verified: verified || false,
+        googleId: googleId,
+        user_name,
+      });
+      return res.json({ newAccount });
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -74,5 +89,25 @@ export const updateAccount = async (req: Request, res: Response) => {
     res.json({ message: "Account updated successfully." });
   } catch (error: unknown) {
     return res.status(500).json({ message: (error as Error).message });
+  }
+};
+
+export const FindAccount = async (req: Request, res: Response) => {
+  try {
+    const { search_params } = req.params;
+    console.log(search_params);
+
+    const user = await Account.findOne({
+      where: { user_name: search_params || "" },
+    });
+
+    if (!user) {
+      res.json({ status: false, user: null });
+    } else {
+      res.json({ status: true, user });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 };

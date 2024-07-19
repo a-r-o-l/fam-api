@@ -4,6 +4,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Account } from "../../models/Account";
 import { RefreshToken } from "../../models/RefreshToken";
 import { Model } from "sequelize";
+import { Subscription } from "../../models/Subscription";
 
 interface AccountInstance extends Model {
   id: number;
@@ -13,6 +14,7 @@ interface AccountInstance extends Model {
   role: string;
   verified: boolean;
   image_url: string;
+  Subscriptions?: (typeof Subscription)[] | [];
 }
 
 interface IRefreshToken {
@@ -26,20 +28,33 @@ const refreshSecret = process.env.REFRESH_SECRET as string;
 
 export const loginUser = async (req: Request, res: Response) => {
   try {
-    const { user_name, password } = req.body;
+    const { user_name, password, googleId } = req.body;
+
+    const searchCriteria = googleId ? { googleId: googleId } : { user_name };
 
     const user = (await Account.findOne({
-      where: { user_name },
+      where: searchCriteria,
+      include: [{ model: Subscription, as: "Subscriptions" }],
     })) as AccountInstance | null;
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    if (user.Subscriptions?.length) {
+      user.Subscriptions.sort((a: any, b: any) => {
+        const endDateA = new Date(a.endDate).getTime();
+        const endDateB = new Date(b.endDate).getTime();
+        return endDateB - endDateA; // Orden descendente por endDate
+      });
+    }
 
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+    if (!googleId) {
+      const isMatch = await bcrypt.compare(password, user.password);
+
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
     }
 
     const accessToken = jwt.sign(
@@ -50,6 +65,7 @@ export const loginUser = async (req: Request, res: Response) => {
         verified: user.verified,
         role: user.role,
         image_url: user.image_url,
+        Subscriptions: user.Subscriptions,
       },
       secret,
       { expiresIn: "5h" }

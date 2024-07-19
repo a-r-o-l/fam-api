@@ -16,11 +16,11 @@ export const Account = sequelize.define(
     },
     user_name: {
       type: DataTypes.STRING(50),
-      allowNull: false,
+      allowNull: true,
     },
     password: {
       type: DataTypes.STRING(100),
-      allowNull: false,
+      allowNull: true,
     },
     email: {
       type: DataTypes.STRING(50),

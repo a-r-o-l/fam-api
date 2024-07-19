@@ -17,6 +17,10 @@ export const Apartment = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    it_was_sold: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
     building_id: {
       type: DataTypes.INTEGER,
     },

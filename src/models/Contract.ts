@@ -37,6 +37,10 @@ export const Contract = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    is_cancelled: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
     months_upgrade: {
       type: DataTypes.INTEGER,
       allowNull: false,

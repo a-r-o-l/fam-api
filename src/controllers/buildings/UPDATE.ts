@@ -26,10 +26,15 @@ export interface BuildingType
   updatedAt?: Date;
 }
 
-export const updateBuilding = async (req: Request, res: Response) => {
+interface CustomRequest extends Request {
+  user?: any;
+}
+
+export const updateBuilding = async (req: CustomRequest, res: Response) => {
   try {
     const { name, address, apartments } = req.body;
     const { id } = req.params;
+    const accountId = req.user.id;
 
     const foundBuilding = await Building.findByPk(id);
     if (!foundBuilding)
@@ -67,6 +72,7 @@ export const updateBuilding = async (req: Request, res: Response) => {
           await Apartment.create({
             number: `${i}`,
             building_id: foundBuilding.getDataValue("id"),
+            account_id: accountId,
           });
         }
       }
