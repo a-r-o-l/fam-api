@@ -31,7 +31,7 @@ export const createPreference = async (req: Request, res: Response) => {
       pending: pendingUrl,
     },
     auto_return: "approved",
-    webhook: "https://fam-api-production.up.railway.app/webhook",
+    notification_url: "https://fam-api-production.up.railway.app/webhook",
   };
 
   try {
@@ -96,6 +96,26 @@ export const deleteSubscriptions = async (
 };
 
 export const webhook = async (req: Request, res: Response) => {
-  console.log(req.body);
+  const paymentId = req.query.id;
+
+  try {
+    const response = await fetch(
+      `https://api.mercadopago.com/v1/payments/${paymentId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${MpAccessToken}`,
+        },
+      }
+    );
+    if (response.ok) {
+      const payment = await response.json();
+      console.log(payment);
+    }
+    res.sendStatus(200);
+  } catch (error) {
+    console.log("Error -> ", error);
+    res.sendStatus(500);
+  }
   res.json({ message: "webhook received" });
 };
