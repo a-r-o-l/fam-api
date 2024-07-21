@@ -111,11 +111,13 @@ export const webhook = async (req: Request, res: Response) => {
     if (response.ok) {
       const payment = await response.json();
       console.log(payment);
+      return res.sendStatus(200);
+    } else {
+      return res.sendStatus(response.status);
     }
     res.sendStatus(200);
   } catch (error) {
     console.log("Error -> ", error);
     res.sendStatus(500);
   }
-  res.json({ message: "webhook received" });
 };
