@@ -27,7 +27,7 @@ export const createAccount = async (req: Request, res: Response) => {
         email: email || "",
         image_url: image_url || "",
         role: role || "user",
-        verified: verified || false,
+        verified: false,
         googleId: googleId,
         user_name,
       });

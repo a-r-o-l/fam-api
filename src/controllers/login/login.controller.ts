@@ -102,7 +102,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
 export const getRefreshToken = async (req: Request, res: Response) => {
   const { refreshToken } = req.body;
-
+  let subscriptionStatus = "expired";
   if (!refreshToken) {
     return res.status(401).json({ message: "Refresh Token is required" });
   }
@@ -124,19 +124,39 @@ export const getRefreshToken = async (req: Request, res: Response) => {
       return res.status(403).json({ message: "Refresh Token has expired" });
     }
 
-    const user = (await Account.findByPk(decoded.id)) as AccountInstance | null;
+    const user = (await Account.findByPk(decoded.id, {
+      include: [{ model: Subscription, as: "Subscriptions" }],
+    })) as AccountInstance | null;
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    if (user.Subscriptions?.length) {
+      user.Subscriptions.sort((a: any, b: any) => {
+        const endDateA = dayjs(a.end_date).valueOf();
+        const endDateB = dayjs(b.end_date).valueOf();
+        return endDateB - endDateA;
+      });
+      const mostRecentSubscription: any = user.Subscriptions[0];
+      const endDate = dayjs(mostRecentSubscription.end_date);
+      const today = dayjs();
+
+      if (today.isBefore(endDate)) {
+        subscriptionStatus = "active";
+      }
+    }
+
     const newAccessToken = jwt.sign(
       {
         id: user.id,
-        email: user.email,
         user_name: user.user_name,
+        email: user.email,
         verified: user.verified,
         role: user.role,
+        image_url: user.image_url,
+        Subscriptions: user.Subscriptions,
+        status: subscriptionStatus,
       },
       secret,
       { expiresIn: "5h" }
