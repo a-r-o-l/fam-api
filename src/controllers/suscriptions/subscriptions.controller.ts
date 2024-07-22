@@ -98,6 +98,8 @@ export const deleteSubscriptions = async (
 export const webhook = async (req: Request, res: Response) => {
   const paymentId = req.query.id;
 
+  console.log("req.query -> ", req.query);
+
   try {
     const response = await fetch(
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
@@ -110,7 +112,7 @@ export const webhook = async (req: Request, res: Response) => {
     );
     if (response.ok) {
       const payment = await response.json();
-      console.log(payment);
+      console.log("payment -> ", payment);
       return res.sendStatus(200);
     } else {
       return res.sendStatus(response.status);
