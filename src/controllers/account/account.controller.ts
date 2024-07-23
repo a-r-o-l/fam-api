@@ -5,7 +5,7 @@ import { Op, where } from "sequelize";
 
 export const createAccount = async (req: Request, res: Response) => {
   try {
-    const { user_name, email, role, verified, password, image_url, googleId } =
+    const { user_name, email, role, verified, password, image_url, google_id } =
       req.body;
 
     const existingAccount = await Account.findOne({
@@ -22,13 +22,13 @@ export const createAccount = async (req: Request, res: Response) => {
         message: "Account already exists with the given email or username.",
       });
     }
-    if (googleId) {
+    if (google_id) {
       const newAccount = await Account.create({
         email: email || "",
         image_url: image_url || "",
         role: role || "user",
         verified: false,
-        googleId: googleId,
+        google_id,
         user_name,
       });
       return res.json({ newAccount });
@@ -95,7 +95,6 @@ export const updateAccount = async (req: Request, res: Response) => {
 export const FindAccount = async (req: Request, res: Response) => {
   try {
     const { search_params } = req.params;
-    console.log(search_params);
 
     const user = await Account.findOne({
       where: { user_name: search_params || "" },

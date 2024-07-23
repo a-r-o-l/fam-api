@@ -16,6 +16,7 @@ interface AccountInstance extends Model {
   verified: boolean;
   image_url: string;
   Subscriptions?: (typeof Subscription)[] | [];
+  isNew?: boolean;
 }
 
 interface IRefreshToken {
@@ -32,9 +33,9 @@ export const loginUser = async (req: Request, res: Response) => {
   let subscriptionStatus = "expired"; // Default status
 
   try {
-    const { user_name, password, googleId } = req.body;
+    const { user_name, password, google_id } = req.body;
 
-    const searchCriteria = googleId ? { googleId: googleId } : { user_name };
+    const searchCriteria = google_id ? { google_id: google_id } : { user_name };
 
     const user = (await Account.findOne({
       where: searchCriteria,
@@ -60,7 +61,7 @@ export const loginUser = async (req: Request, res: Response) => {
       }
     }
 
-    if (!googleId) {
+    if (!google_id) {
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
@@ -78,6 +79,7 @@ export const loginUser = async (req: Request, res: Response) => {
         image_url: user.image_url,
         Subscriptions: user.Subscriptions,
         status: subscriptionStatus,
+        isNew: user.isNew,
       },
       secret,
       { expiresIn: "5h" }
@@ -157,6 +159,7 @@ export const getRefreshToken = async (req: Request, res: Response) => {
         image_url: user.image_url,
         Subscriptions: user.Subscriptions,
         status: subscriptionStatus,
+        isNew: user.isNew,
       },
       secret,
       { expiresIn: "5h" }

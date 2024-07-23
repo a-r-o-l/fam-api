@@ -98,6 +98,8 @@ export const deleteSubscriptions = async (
 export const webhook = async (req: Request, res: Response) => {
   const paymentId = req.query.id;
 
+  console.log("TYPE => ", req.query.type, " ", req.query);
+
   console.log("req.query -> ", req.query);
 
   try {

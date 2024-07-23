@@ -39,9 +39,13 @@ export const Account = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    googleId: {
+    google_id: {
       type: DataTypes.STRING(100),
       allowNull: true,
+    },
+    isNew: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
   },
   {
