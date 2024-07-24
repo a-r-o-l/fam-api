@@ -99,10 +99,8 @@ export const deleteSubscriptions = async (
 };
 
 export const webhook = async (req: Request, res: Response) => {
-  console.log(req.query.type);
   if (req.query.type === "payment") {
     const paymentId = req.query["data.id"];
-    console.log(paymentId);
     try {
       const response = await fetch(
         `https://api.mercadopago.com/v1/payments/${paymentId}`,
@@ -113,32 +111,28 @@ export const webhook = async (req: Request, res: Response) => {
           },
         }
       );
-      console.log("response -> ", response);
       if (response.ok) {
         const payment = await response.json();
         const isApproved = payment.status === "approved";
         const existSubscription = await Subscription.findOne({
           where: { payment_id: payment.id },
         });
-        console.log("existsubs -> ", existSubscription);
         if (!existSubscription && isApproved) {
-          console.log("isApproved -> ", isApproved);
-          console.log("exist -> ");
-          const newSubscription = await Subscription.create({
-            payment_id: payment.id,
-            payment_type_id: payment.payment_type_id,
-            status: payment.status,
-            value: payment.transaction_details.total_paid_amount,
-            date_approved: payment.date_approved,
-            start_date: dayjs(payment.date_approved).format("YYYY/MM/DD"),
-            end_date: dayjs(payment.date_approved)
+          const data = {
+            payment_id: payment?.id,
+            payment_type_id: payment?.payment_type_id,
+            status: payment?.status,
+            value: payment?.transaction_details?.total_paid_amount,
+            date_approved: payment?.date_approved,
+            start_date: dayjs(payment?.date_approved).format("YYYY/MM/DD"),
+            end_date: dayjs(payment?.date_approved)
               .add(1, "month")
               .format("YYYY/MM/DD"),
-            ip: payment.additional_info.ip_address,
-            account_id: parseInt(payment.items[0].description),
-            payer: payment.payer,
-          });
-          console.log("newSubscription -> ", newSubscription);
+            ip: payment?.additional_info?.ip_address,
+            account_id: parseInt(payment?.items[0]?.description),
+            payer: payment?.payer,
+          };
+          await Subscription.create(data);
         }
         return res.sendStatus(200);
       } else {
