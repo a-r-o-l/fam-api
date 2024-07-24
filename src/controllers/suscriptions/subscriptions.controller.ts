@@ -99,8 +99,10 @@ export const deleteSubscriptions = async (
 };
 
 export const webhook = async (req: Request, res: Response) => {
+  console.log(req.query.type);
   if (req.query.type === "payment") {
     const paymentId = req.query["data.id"];
+    console.log(paymentId);
     try {
       const response = await fetch(
         `https://api.mercadopago.com/v1/payments/${paymentId}`,
@@ -111,12 +113,14 @@ export const webhook = async (req: Request, res: Response) => {
           },
         }
       );
+      console.log("response -> ", response);
       if (response.ok) {
         const payment = await response.json();
         const isApproved = payment.status === "approved";
         const existSubscription = await Subscription.findOne({
           where: { payment_id: payment.id },
         });
+        console.log("existsubs -> ", existSubscription);
         if (!existSubscription && isApproved) {
           console.log("isApproved -> ", isApproved);
           console.log("exist -> ");
