@@ -118,7 +118,9 @@ export const webhook = async (req: Request, res: Response) => {
           where: { payment_id: payment.id },
         });
         if (!existSubscription && isApproved) {
-          await Subscription.create({
+          console.log("isApproved -> ", isApproved);
+          console.log("exist -> ");
+          const newSubscription = await Subscription.create({
             payment_id: payment.id,
             payment_type_id: payment.payment_type_id,
             status: payment.status,
@@ -132,6 +134,7 @@ export const webhook = async (req: Request, res: Response) => {
             account_id: parseInt(payment.items[0].description),
             payer: payment.payer,
           });
+          console.log("newSubscription -> ", newSubscription);
         }
         return res.sendStatus(200);
       } else {
@@ -142,6 +145,6 @@ export const webhook = async (req: Request, res: Response) => {
       res.sendStatus(500);
     }
   } else {
-    res.sendStatus(200);
+    res.sendStatus(403);
   }
 };
