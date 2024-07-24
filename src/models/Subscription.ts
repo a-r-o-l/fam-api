@@ -11,7 +11,7 @@ export const Subscription = sequelize.define(
       autoIncrement: true,
     },
     payment_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       allowNull: true,
     },
     payment_type_id: {
@@ -23,7 +23,7 @@ export const Subscription = sequelize.define(
       allowNull: true,
     },
     value: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       allowNull: false,
     },
     date_approved: {
