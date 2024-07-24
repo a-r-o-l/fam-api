@@ -131,11 +131,15 @@ export const webhook = async (req: Request, res: Response) => {
                 .add(1, "month")
                 .format("YYYY/MM/DD") || "",
             ip: payment?.additional_info?.ip_address || "",
-            account_id: parseInt(payment?.items[0]?.description) || "",
+            account_id:
+              payment?.additional_info?.items &&
+              payment?.additional_info?.items[0]
+                ? parseInt(payment?.additional_info?.items[0]?.description)
+                : "",
             payer: payment?.payer || "",
           };
           console.log(data);
-          // await Subscription.create(data);
+          await Subscription.create(data);
         }
         return res.sendStatus(200);
       } else {
