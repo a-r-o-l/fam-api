@@ -71,7 +71,7 @@ export const deleteAccount = async (req: Request, res: Response) => {
 export const updateAccount = async (req: Request, res: Response) => {
   try {
     const { accountId } = req.params;
-    const { user_name, email, image_url, role, verified } = req.body;
+    const { user_name, email, image_url, role, verified, is_new } = req.body;
 
     const foundAccount = await Account.findByPk(accountId);
 
@@ -79,11 +79,12 @@ export const updateAccount = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Account not found." });
     }
     await foundAccount.update({
-      user_name,
-      email,
-      image_url,
-      role,
-      verified,
+      ...(user_name !== undefined && { user_name }),
+      ...(email !== undefined && { email }),
+      ...(image_url !== undefined && { image_url }),
+      ...(role !== undefined && { role }),
+      ...(verified !== undefined && { verified }),
+      ...(is_new !== undefined && { is_new }),
     });
 
     res.json({ message: "Account updated successfully." });

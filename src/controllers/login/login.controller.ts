@@ -16,7 +16,7 @@ interface AccountInstance extends Model {
   verified: boolean;
   image_url: string;
   Subscriptions?: (typeof Subscription)[] | [];
-  isNew?: boolean;
+  is_new?: boolean;
 }
 
 interface IRefreshToken {
@@ -79,7 +79,7 @@ export const loginUser = async (req: Request, res: Response) => {
         image_url: user.image_url,
         Subscriptions: user.Subscriptions,
         status: subscriptionStatus,
-        isNew: user.isNew,
+        is_new: user.is_new,
       },
       secret,
       { expiresIn: "5h" }
@@ -159,7 +159,7 @@ export const getRefreshToken = async (req: Request, res: Response) => {
         image_url: user.image_url,
         Subscriptions: user.Subscriptions,
         status: subscriptionStatus,
-        isNew: user.isNew,
+        is_new: user.is_new,
       },
       secret,
       { expiresIn: "5h" }

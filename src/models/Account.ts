@@ -43,7 +43,7 @@ export const Account = sequelize.define(
       type: DataTypes.STRING(100),
       allowNull: true,
     },
-    isNew: {
+    is_new: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
