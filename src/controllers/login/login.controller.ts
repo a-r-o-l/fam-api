@@ -17,6 +17,7 @@ interface AccountInstance extends Model {
   image_url: string;
   Subscriptions?: (typeof Subscription)[] | [];
   is_new?: boolean;
+  google_id?: string;
 }
 
 interface IRefreshToken {
@@ -29,14 +30,11 @@ const secret = process.env.JWT_SECRET as string;
 const refreshSecret = process.env.REFRESH_SECRET as string;
 
 export const loginUser = async (req: Request, res: Response) => {
-  const today = dayjs();
-  let subscriptionStatus = "expired"; // Default status
+  let subscriptionStatus = "expired";
 
   try {
     const { user_name, password, google_id } = req.body;
-
     const searchCriteria = google_id ? { google_id: google_id } : { user_name };
-
     const user = (await Account.findOne({
       where: searchCriteria,
       include: [{ model: Subscription, as: "Subscriptions" }],
@@ -80,6 +78,7 @@ export const loginUser = async (req: Request, res: Response) => {
         Subscriptions: user.Subscriptions,
         status: subscriptionStatus,
         is_new: user.is_new,
+        google_id: user.google_id,
       },
       secret,
       { expiresIn: "5h" }
@@ -160,6 +159,7 @@ export const getRefreshToken = async (req: Request, res: Response) => {
         Subscriptions: user.Subscriptions,
         status: subscriptionStatus,
         is_new: user.is_new,
+        google_id: user.google_id,
       },
       secret,
       { expiresIn: "5h" }

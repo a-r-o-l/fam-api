@@ -1,6 +1,7 @@
 import { MercadoPagoConfig, Preference } from "mercadopago";
 import { Request, Response } from "express";
 import { Subscription } from "../../models/Subscription";
+import dayjs from "dayjs";
 
 interface CustomRequest extends Request {
   user?: any;
@@ -10,9 +11,11 @@ const MpAccessToken = process.env.MP_ACCESS_TOKEN as string;
 const successUrl = process.env.MP_SUCCESS_URL as string;
 const failureUrl = process.env.MP_FAILURE_URL as string;
 const pendingUrl = process.env.MP_PENDING_URL as string;
+const notificationUrl = process.env.MP_NOTIFICATION_URL as string;
 
-export const createPreference = async (req: Request, res: Response) => {
-  const { title, unit_price, description, id } = req.body;
+export const createPreference = async (req: CustomRequest, res: Response) => {
+  const { title, unit_price, id } = req.body;
+  const accountId = req.user.id;
 
   const body = {
     items: [
@@ -21,7 +24,7 @@ export const createPreference = async (req: Request, res: Response) => {
         title: title,
         unit_price: unit_price,
         quantity: 1,
-        description: description,
+        description: accountId,
         currency_id: "ARS",
       },
     ],
@@ -31,7 +34,7 @@ export const createPreference = async (req: Request, res: Response) => {
       pending: pendingUrl,
     },
     auto_return: "approved",
-    notification_url: "https://fam-api-production.up.railway.app/webhook",
+    notification_url: notificationUrl,
   };
 
   try {
@@ -96,32 +99,49 @@ export const deleteSubscriptions = async (
 };
 
 export const webhook = async (req: Request, res: Response) => {
-  const paymentId = req.query.id;
-
-  console.log("TYPE => ", req.query.type, " ", req.query);
-
-  console.log("req.query -> ", req.query);
-
-  try {
-    const response = await fetch(
-      `https://api.mercadopago.com/v1/payments/${paymentId}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${MpAccessToken}`,
-        },
+  if (req.query.type === "payment") {
+    const paymentId = req.query["data.id"];
+    try {
+      const response = await fetch(
+        `https://api.mercadopago.com/v1/payments/${paymentId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${MpAccessToken}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const payment = await response.json();
+        const isApproved = payment.status === "approved";
+        const existSubscription = await Subscription.findOne({
+          where: { payment_id: payment.id },
+        });
+        if (!existSubscription && isApproved) {
+          await Subscription.create({
+            payment_id: payment.id,
+            payment_type_id: payment.payment_type_id,
+            status: payment.status,
+            value: payment.transaction_details.total_paid_amount,
+            date_approved: payment.date_approved,
+            start_date: dayjs(payment.date_approved).format("YYYY/MM/DD"),
+            end_date: dayjs(payment.date_approved)
+              .add(1, "month")
+              .format("YYYY/MM/DD"),
+            ip: payment.additional_info.ip_address,
+            account_id: parseInt(payment.items[0].description),
+            payer: payment.payer,
+          });
+        }
+        return res.sendStatus(200);
+      } else {
+        return res.sendStatus(response.status);
       }
-    );
-    if (response.ok) {
-      const payment = await response.json();
-      console.log("payment -> ", payment);
-      return res.sendStatus(200);
-    } else {
-      return res.sendStatus(response.status);
+    } catch (error) {
+      console.log("Error -> ", error);
+      res.sendStatus(500);
     }
+  } else {
     res.sendStatus(200);
-  } catch (error) {
-    console.log("Error -> ", error);
-    res.sendStatus(500);
   }
 };

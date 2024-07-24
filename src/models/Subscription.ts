@@ -10,9 +10,25 @@ export const Subscription = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    payment_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    payment_type_id: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
+    status: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
     value: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    date_approved: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
     },
     start_date: {
       type: DataTypes.STRING(100),
@@ -24,9 +40,17 @@ export const Subscription = sequelize.define(
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
+    ip: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
     account_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    payer: {
+      type: DataTypes.JSON,
+      allowNull: true,
     },
   },
   {
