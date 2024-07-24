@@ -119,20 +119,23 @@ export const webhook = async (req: Request, res: Response) => {
         });
         if (!existSubscription && isApproved) {
           const data = {
-            payment_id: payment?.id,
-            payment_type_id: payment?.payment_type_id,
-            status: payment?.status,
-            value: payment?.transaction_details?.total_paid_amount,
-            date_approved: payment?.date_approved,
-            start_date: dayjs(payment?.date_approved).format("YYYY/MM/DD"),
-            end_date: dayjs(payment?.date_approved)
-              .add(1, "month")
-              .format("YYYY/MM/DD"),
-            ip: payment?.additional_info?.ip_address,
-            account_id: parseInt(payment?.items[0]?.description),
-            payer: payment?.payer,
+            payment_id: payment?.id || "",
+            payment_type_id: payment?.payment_type_id || "",
+            status: payment?.status || "",
+            value: payment?.transaction_details?.total_paid_amount || "",
+            date_approved: payment?.date_approved || "",
+            start_date:
+              dayjs(payment?.date_approved).format("YYYY/MM/DD") || "",
+            end_date:
+              dayjs(payment?.date_approved)
+                .add(1, "month")
+                .format("YYYY/MM/DD") || "",
+            ip: payment?.additional_info?.ip_address || "",
+            account_id: parseInt(payment?.items[0]?.description) || "",
+            payer: payment?.payer || "",
           };
-          await Subscription.create(data);
+          console.log(data);
+          // await Subscription.create(data);
         }
         return res.sendStatus(200);
       } else {
