@@ -31,14 +31,12 @@ export const Subscription = sequelize.define(
       allowNull: true,
     },
     start_date: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW,
     },
     end_date: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW,
     },
     ip: {
       type: DataTypes.STRING(50),

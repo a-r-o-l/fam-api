@@ -9,37 +9,40 @@ export const Apartment = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    number: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
+    selling_price: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
-    rented: {
+    floor: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+    },
+    apartment: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+    },
+    name: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+    },
+    sold: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    it_was_sold: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    building_id: {
+    property_id: {
       type: DataTypes.INTEGER,
     },
-    active_contract_id: {
+    contract_id: {
       type: DataTypes.INTEGER,
       defaultValue: null,
-    },
-    active_renter_id: {
-      type: DataTypes.INTEGER,
-      defaultValue: null,
-    },
-    account_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
     },
     hidden: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
-      allowNull: true,
+    },
+    account_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
   },
   {

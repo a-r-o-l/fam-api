@@ -30,10 +30,7 @@ export const Payment = sequelize.define(
     contract_id: {
       type: DataTypes.INTEGER,
     },
-    renter_id: {
-      type: DataTypes.INTEGER,
-    },
-    apartment_id: {
+    property_id: {
       type: DataTypes.INTEGER,
     },
     payment_number: {

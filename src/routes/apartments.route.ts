@@ -1,15 +1,18 @@
 import { Router } from "express";
-import { deleteApartment } from "../controllers/apartments/DELETE";
-import { getApartment, getApartments } from "../controllers/apartments/GET";
-import { createApartment } from "../controllers/apartments/POST";
-import { updateApartment } from "../controllers/apartments/UPDATE";
+import {
+  createApartment,
+  deleteApartment,
+  getApartment,
+  getApartments,
+  updateApartment,
+} from "../controllers/apartment.controller";
 
 const router = Router();
 
-router.get("/apartments", getApartments);
-router.post("/apartments", createApartment);
-router.put("/apartments/:id", updateApartment);
-router.delete("/apartments/:id", deleteApartment);
-router.get("/apartments/:id", getApartment);
+router.get("/apartment", getApartments);
+router.get("/apartment/:id", getApartment);
+router.post("/apartment", createApartment);
+router.put("/apartment/:id", updateApartment);
+router.delete("/apartment/:id", deleteApartment);
 
 export default router;

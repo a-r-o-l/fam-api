@@ -1,7 +1,8 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Op } from "sequelize";
 import { sequelize } from "../database/database";
-import { Renter } from "./Renter";
 import { Apartment } from "./Apartment";
+import { Property } from "./Property";
+import dayjs from "dayjs";
 
 export const Contract = sequelize.define(
   "Contract",
@@ -20,55 +21,45 @@ export const Contract = sequelize.define(
       allowNull: false,
     },
     start_date: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.DATE,
       allowNull: false,
     },
     end_date: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.DATE,
       allowNull: false,
     },
-    renter_id: {
+    property_id: {
       type: DataTypes.INTEGER,
+      allowNull: true,
     },
     apartment_id: {
       type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    property_type: {
+      type: DataTypes.ENUM("building", "house", "apartment", "lounge"),
+      defaultValue: "building",
+      allowNull: false,
+    },
+    renter: {
+      type: DataTypes.JSON,
+      allowNull: true,
     },
     is_expired: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    is_cancelled: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    months_upgrade: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
-    upgrade_value: {
-      type: DataTypes.INTEGER,
+    upgrade: {
+      type: DataTypes.JSON,
       allowNull: true,
-      defaultValue: null,
-    },
-    upgrade_start_date: {
-      type: DataTypes.STRING(50),
-      allowNull: true,
-      defaultValue: null,
-    },
-    upgrade_end_date: {
-      type: DataTypes.STRING(50),
-      allowNull: true,
-      defaultValue: null,
-    },
-    account_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
     },
     hidden: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
-      allowNull: true,
+    },
+    account_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
   },
   {
@@ -76,11 +67,30 @@ export const Contract = sequelize.define(
     timestamps: true,
     createdAt: true,
     updatedAt: true,
+    hooks: {
+      beforeFind: async (options: any) => {
+        const now = dayjs();
+        await Contract.update(
+          {
+            is_expired: true,
+          },
+          {
+            where: {
+              end_date: {
+                [Op.lt]: now,
+              },
+              is_expired: false,
+            },
+          }
+        );
+      },
+    },
   }
 );
 
-Contract.belongsTo(Renter, { foreignKey: "renter_id", targetKey: "id" });
 Contract.belongsTo(Apartment, { foreignKey: "apartment_id", targetKey: "id" });
 
-Renter.hasMany(Contract, { foreignKey: "renter_id", sourceKey: "id" });
 Apartment.hasMany(Contract, { foreignKey: "apartment_id", sourceKey: "id" });
+Contract.belongsTo(Property, { foreignKey: "property_id", targetKey: "id" });
+
+Property.hasMany(Contract, { foreignKey: "property_id", sourceKey: "id" });

@@ -54,13 +54,14 @@ export const createPreference = async (req: CustomRequest, res: Response) => {
 
 export const createSubscription = async (req: CustomRequest, res: Response) => {
   const accountId = req.user.id;
-  const { value, start_date, end_date } = req.body;
+  const { value, start_date, end_date, status } = req.body;
 
   try {
     const newSubscription = await Subscription.create({
       value,
       start_date,
       end_date,
+      status,
       account_id: accountId,
     });
     res.json(newSubscription);

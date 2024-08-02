@@ -3,6 +3,17 @@ import { Account } from "../../models/Account";
 import bcrypt from "bcrypt";
 import { Op, where } from "sequelize";
 
+type AccountType = {
+  user_name: string;
+  email: string;
+  role: string;
+  verified: boolean;
+  password: string;
+  image_url: string;
+  google_id: string;
+  update: (body: any) => void;
+};
+
 export const createAccount = async (req: Request, res: Response) => {
   try {
     const { user_name, email, role, verified, password, image_url, google_id } =
@@ -71,7 +82,8 @@ export const deleteAccount = async (req: Request, res: Response) => {
 export const updateAccount = async (req: Request, res: Response) => {
   try {
     const { accountId } = req.params;
-    const { user_name, email, image_url, role, verified, is_new } = req.body;
+    const { user_name, email, image_url, role, verified, is_new, password } =
+      req.body;
 
     const foundAccount = await Account.findByPk(accountId);
 
@@ -109,5 +121,73 @@ export const FindAccount = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const checkPassword = async (req: Request, res: Response) => {
+  try {
+    const { accountId } = req.params;
+    const { password } = req.body;
+    const account = (await Account.findByPk(accountId)) as AccountType | null;
+    if (!account) {
+      return res.status(404).json({ message: "Cuenta no existente." });
+    }
+    if (!account.password) {
+      return res.status(400).json({ message: "La cuenta no tiene password" });
+    }
+    const isMatch = await bcrypt.compare(password, account.password);
+    console.log(isMatch);
+    if (isMatch) {
+      res.json({ matching: true });
+    } else {
+      res.json({ matching: false });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const createNewPassword = async (req: Request, res: Response) => {
+  try {
+    const { accountId } = req.params;
+    const account = (await Account.findByPk(accountId)) as AccountType | null;
+    if (!account) {
+      return res.status(404).json({ message: "Cuenta no existente." });
+    }
+    const { password } = req.body;
+    if (!account.password) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      account.update({
+        password: hashedPassword,
+      });
+      res.status(200).json({ message: "Password creado correctamente" });
+    } else {
+      res.status(400).json({ message: "La cuenta ya tiene password" });
+    }
+  } catch (error: unknown) {
+    return res.status(500).json({ message: (error as Error).message });
+  }
+};
+
+export const changePassword = async (req: Request, res: Response) => {
+  try {
+    const { accountId } = req.params;
+    const account = (await Account.findByPk(accountId)) as AccountType | null;
+    if (!account) {
+      return res.status(404).json({ message: "Cuenta no existente." });
+    }
+    const { password } = req.body;
+    if (!password) {
+      return res.status(400).json({ message: "El password es requerido" });
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    account.update({
+      password: hashedPassword,
+    });
+  } catch (error: unknown) {
+    return res.status(500).json({ message: (error as Error).message });
   }
 };

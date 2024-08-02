@@ -53,9 +53,11 @@ export const loginUser = async (req: Request, res: Response) => {
       const mostRecentSubscription: any = user.Subscriptions[0];
       const endDate = dayjs(mostRecentSubscription.end_date);
       const today = dayjs();
-
       if (today.isBefore(endDate)) {
         subscriptionStatus = "active";
+      }
+      if (mostRecentSubscription.status === "free") {
+        subscriptionStatus = "free";
       }
     }
 
@@ -79,6 +81,7 @@ export const loginUser = async (req: Request, res: Response) => {
         status: subscriptionStatus,
         is_new: user.is_new,
         google_id: user.google_id,
+        has_password: !!user.password,
       },
       secret,
       { expiresIn: "5h" }
@@ -146,6 +149,9 @@ export const getRefreshToken = async (req: Request, res: Response) => {
       if (today.isBefore(endDate)) {
         subscriptionStatus = "active";
       }
+      if (mostRecentSubscription.status === "free") {
+        subscriptionStatus = "free";
+      }
     }
 
     const newAccessToken = jwt.sign(
@@ -160,6 +166,7 @@ export const getRefreshToken = async (req: Request, res: Response) => {
         status: subscriptionStatus,
         is_new: user.is_new,
         google_id: user.google_id,
+        has_password: !!user.password,
       },
       secret,
       { expiresIn: "5h" }
