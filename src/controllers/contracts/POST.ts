@@ -10,8 +10,8 @@ type ApartmentAttributes = {
   number?: string;
   rented?: boolean;
   building_id?: number;
-  active_contract_id?: number;
-  active_renter_id?: number;
+  active_contract_id?: number | null;
+  active_renter_id?: number | null;
   save: () => void;
 };
 
@@ -23,9 +23,28 @@ type RenterAttributes = {
   phone?: string;
   email?: string;
   image_url?: string;
-  active_contract_id?: number;
-  active_apartment_id?: number;
+  active_contract_id?: number | null;
+  active_apartment_id?: number | null;
   save: () => void;
+};
+
+type ContractAttributes = {
+  id?: number;
+  end_date?: string;
+  is_expired?: boolean;
+  is_cancelled?: boolean;
+  renter_id?: number;
+  apartment_id?: number;
+  start_date?: string;
+  months_amount?: number;
+  value?: number;
+  months_upgrade?: number;
+  upgrade_value?: number | null;
+  upgrade_start_date?: string | null;
+  upgrade_end_date?: string | null;
+  account_id?: number;
+  save: () => void;
+  getDataValue: (key: string) => any;
 };
 
 interface CustomRequest extends Request {
@@ -139,6 +158,46 @@ export const createContract = async (req: CustomRequest, res: Response) => {
     res.json(newContract);
   } catch (error: unknown) {
     console.log(error);
+    return res.status(500).json({ message: (error as Error).message });
+  }
+};
+
+export const cancelContract = async (req: CustomRequest, res: Response) => {
+  const accountId = req.user.id;
+  const { id } = req.body;
+  try {
+    const foundContract = (await Contract.findByPk(id)) as ContractAttributes;
+    if (!foundContract) {
+      return res.status(404).json({ message: "Contrato no encontrado" });
+    }
+    const apartmentId = foundContract.getDataValue("apartment_id");
+    const renterId = foundContract.getDataValue("renter_id");
+    const foundApartment = (await Apartment.findByPk(
+      apartmentId
+    )) as ApartmentAttributes;
+    const foundRenter = (await Renter.findByPk(renterId)) as RenterAttributes;
+
+    if (!foundApartment || !foundRenter) {
+      return res.status(404).json({ message: "Datos no encontrados" });
+    }
+
+    foundApartment.rented = false;
+    foundApartment.active_contract_id = null;
+    foundApartment.active_renter_id = null;
+
+    foundRenter.active_contract_id = null;
+    foundRenter.active_apartment_id = null;
+
+    foundContract.is_cancelled = true;
+    foundContract.is_expired = true;
+    foundContract.end_date = dayjs().format("YYYY/MM/DD");
+
+    foundApartment.save();
+    foundRenter.save();
+    foundContract.save();
+
+    res.json({ message: "Contrato cancelado" });
+  } catch (error: unknown) {
     return res.status(500).json({ message: (error as Error).message });
   }
 };

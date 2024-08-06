@@ -13,11 +13,13 @@ export const getApartments = async (req: CustomRequest, res: Response) => {
   try {
     const accountId = req.user.id;
     const { buildingId } = req.query;
+    const where = buildingId
+      ? { building_id: buildingId, account_id: accountId }
+      : { account_id: accountId };
+
     const apartments = await Apartment.findAll({
-      where: buildingId
-        ? { building_id: buildingId, account_id: accountId }
-        : { account_id: accountId },
-      order: [[Sequelize.literal("CAST(number AS INTEGER)"), "ASC"]],
+      where: where,
+      order: [["id", "ASC"]],
       include: [
         {
           model: Building,
@@ -48,6 +50,7 @@ export const getApartment = async (req: CustomRequest, res: Response) => {
     const foundApartment = await Apartment.findOne({
       where: { id, account_id: accountId },
     });
+    console.log(foundApartment);
     if (!foundApartment)
       return res.status(404).json({ message: "Apartment not found" });
     res.json(foundApartment);

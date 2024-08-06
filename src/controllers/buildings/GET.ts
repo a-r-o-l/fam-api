@@ -63,8 +63,9 @@ export const getBuilding = async (req: CustomRequest, res: Response) => {
     const foundBuilding = await Building.findOne({
       where: { id, account_id: accountId },
     });
-    if (!foundBuilding)
+    if (!foundBuilding) {
       return res.status(404).json({ message: "Building not found" });
+    }
     res.json(foundBuilding);
   } catch (error: unknown) {
     return res.status(500).json({ message: (error as Error).message });

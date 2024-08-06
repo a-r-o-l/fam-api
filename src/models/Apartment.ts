@@ -9,6 +9,10 @@ export const Apartment = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    floor: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
     number: {
       type: DataTypes.STRING(50),
       allowNull: false,

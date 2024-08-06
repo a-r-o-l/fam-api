@@ -8,6 +8,8 @@ type BuildingAttributes = {
   address: string;
   name: string;
   apartments: number;
+  apartments_with_floor?: boolean;
+  image_url?: string;
 };
 
 interface BuildingCreationAttributes
@@ -24,21 +26,26 @@ interface CustomRequest extends Request {
 }
 
 export const createBuilding = async (req: CustomRequest, res: Response) => {
-  const { name, address, apartments } = req.body;
+  const { name, address, apartments, apartments_with_floor, image_url } =
+    req.body;
   const accountId = req.user.id;
   try {
     const newBuilding: BuildingType = await Building.create({
       name,
       address,
       apartments,
+      apartments_with_floor,
+      image_url,
       account_id: accountId,
     });
-    for (let i = 1; i <= apartments; i++) {
-      await Apartment.create({
-        number: `${i}`,
-        building_id: newBuilding.getDataValue("id"),
-        account_id: accountId,
-      });
+    if (!apartments_with_floor) {
+      for (let i = 1; i <= apartments; i++) {
+        await Apartment.create({
+          number: `${i}`,
+          building_id: newBuilding.getDataValue("id"),
+          account_id: accountId,
+        });
+      }
     }
     res.json(newBuilding);
   } catch (error: unknown) {

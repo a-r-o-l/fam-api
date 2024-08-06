@@ -18,9 +18,17 @@ export const Building = sequelize.define(
       type: DataTypes.STRING(50),
       allowNull: false,
     },
+    image_url: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+    },
     apartments: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    apartments_with_floor: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     account_id: {
       type: DataTypes.INTEGER,
