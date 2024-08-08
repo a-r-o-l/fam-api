@@ -68,6 +68,9 @@ export const cleanExpiredContracts = async () => {
         },
       },
     });
+    if (!contracts?.length) {
+      return;
+    }
     for (const contract of contracts) {
       const contractModel: any = contract;
       const apartment = (await Apartment.findByPk(
@@ -103,7 +106,6 @@ export const createAutomaticPayments = async () => {
   let newsPayments: PaymentAttributes[] = [];
   const currentMonth = dayjs().month();
   try {
-    ``;
     const renters = await Renter.findAll({
       where: {
         active_contract_id: {
@@ -111,6 +113,9 @@ export const createAutomaticPayments = async () => {
         },
       },
     });
+    if (!renters?.length) {
+      return;
+    }
     for (const renterModel of renters) {
       const renter = renterModel.get() as RenterAttributes;
 

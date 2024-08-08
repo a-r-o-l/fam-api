@@ -17,8 +17,7 @@ import accountRoutes from "./src/routes/accounts.route";
 import subscriptionsRoutes from "./src/routes/subscriptions.route";
 import webHookRoutes from "./src/routes/webHook.route";
 import authenticateToken from "./src/middlewares/authMiddleware";
-import "./src/models/Building";
-import "./src/models/Renter";
+import "./src/models/asociations";
 import {
   cleanExpiredContracts,
   createAutomaticPayments,
@@ -27,12 +26,12 @@ import dayjs from "dayjs";
 import path from "path";
 
 config();
-cron.schedule("0 0 * * 0,4", async () => {
-  console.log("se dispara cron");
-  console.log(dayjs().format("YYYY-MM-DD HH:mm:ss"));
-  await cleanExpiredContracts();
-  await createAutomaticPayments();
-});
+// cron.schedule("0 0 * * 0,4", async () => {
+//   console.log("se dispara cron");
+//   console.log(dayjs().format("YYYY-MM-DD HH:mm:ss"));
+//   await cleanExpiredContracts();
+//   await createAutomaticPayments();
+// });
 
 const app: Express = express();
 const volumeMountPath = process.env.RAILWAY_VOLUME_MOUNT_PATH || "/app/images";

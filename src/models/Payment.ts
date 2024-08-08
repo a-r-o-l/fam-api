@@ -57,6 +57,3 @@ export const Payment = sequelize.define(
     updatedAt: true,
   }
 );
-
-Payment.belongsTo(Contract, { foreignKey: "contract_id", targetKey: "id" });
-Contract.hasMany(Payment, { foreignKey: "contract_id", sourceKey: "id" });

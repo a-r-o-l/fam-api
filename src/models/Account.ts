@@ -55,18 +55,3 @@ export const Account = sequelize.define(
     updatedAt: true,
   }
 );
-
-Account.hasMany(Building, { foreignKey: "account_id" });
-Building.belongsTo(Account, { foreignKey: "account_id", targetKey: "id" });
-
-Account.hasMany(Apartment, { foreignKey: "account_id" });
-Apartment.belongsTo(Account, { foreignKey: "account_id", targetKey: "id" });
-
-Account.hasMany(Renter, { foreignKey: "account_id" });
-Renter.belongsTo(Account, { foreignKey: "account_id", targetKey: "id" });
-
-Account.hasMany(Contract, { foreignKey: "account_id" });
-Contract.belongsTo(Account, { foreignKey: "account_id", targetKey: "id" });
-
-Account.hasMany(Payment, { foreignKey: "account_id" });
-Payment.belongsTo(Account, { foreignKey: "account_id", targetKey: "id" });

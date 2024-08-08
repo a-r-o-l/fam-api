@@ -60,6 +60,3 @@ export const Subscription = sequelize.define(
     updatedAt: true,
   }
 );
-
-Subscription.belongsTo(Account, { foreignKey: "account_id", targetKey: "id" });
-Account.hasMany(Subscription, { foreignKey: "account_id", sourceKey: "id" });

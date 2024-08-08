@@ -78,9 +78,3 @@ export const Contract = sequelize.define(
     updatedAt: true,
   }
 );
-
-Contract.belongsTo(Renter, { foreignKey: "renter_id", targetKey: "id" });
-Contract.belongsTo(Apartment, { foreignKey: "apartment_id", targetKey: "id" });
-
-Renter.hasMany(Contract, { foreignKey: "renter_id", sourceKey: "id" });
-Apartment.hasMany(Contract, { foreignKey: "apartment_id", sourceKey: "id" });

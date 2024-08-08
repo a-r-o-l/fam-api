@@ -116,12 +116,12 @@ export const createContract = async (req: CustomRequest, res: Response) => {
     }
     if (foundApartment.active_contract_id) {
       return res
-        .status(414)
+        .status(415)
         .json({ message: "El apartamento ya esta alquilado" });
     }
     if (foundRenter.active_contract_id) {
       return res
-        .status(414)
+        .status(416)
         .json({ message: "El inquilino ya tiene un contrato" });
     }
 
