@@ -128,6 +128,48 @@ export const getAnalitycs2 = async (req: CustomRequest, res: Response) => {
   }
 };
 
+export const getFeatures = async (req: CustomRequest, res: Response) => {
+  const accountId = req.user.id;
+  const buildings = await Building.findAll({
+    where: { account_id: accountId },
+  });
+  const renters = await Renter.findAll({ where: { account_id: accountId } });
+  const apartments = await Apartment.findAll({
+    where: { account_id: accountId },
+  });
+  const payments = await Payment.findAll({ where: { account_id: accountId } });
+
+  const donePayments = payments
+    .map((payment) => payment.get({ plain: true }))
+    .filter((payment) => payment.payed);
+  const pendingPayments = payments
+    .map((payment) => payment.get({ plain: true }))
+    .filter((payment) => !payment.payed);
+  const totalAmountPayments = payments
+    .map((payment) => payment.get({ plain: true }))
+    .reduce((sum, payment) => sum + payment.value, 0);
+
+  const activeRenters = renters
+    .map((renter) => renter.get({ plain: true }))
+    .filter((renter) => renter.active_contract_id);
+  const inactiveRenters = renters
+    .map((renter) => renter.get({ plain: true }))
+    .filter((renter) => !renter.active_contract_id);
+
+  res.json({
+    buildings: buildings.length || 0,
+    houses: 0,
+    lounges: 0,
+    activeRenters: activeRenters.length || 0,
+    inactiveRenters: inactiveRenters.length || 0,
+    apartments: apartments.length || 0,
+    payments: payments.length || 0,
+    donePayments: donePayments.length || 0,
+    pendingPayments: pendingPayments.length || 0,
+    totalAmountPayments,
+  });
+};
+
 export const getPaymentsbyTime = async (req: Request, res: Response) => {
   try {
     const year = req?.params?.year;

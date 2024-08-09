@@ -11,6 +11,10 @@ export const Contract = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    type: {
+      type: DataTypes.ENUM("building", "apartment, house, lounge"),
+      defaultValue: "building",
+    },
     months_amount: {
       type: DataTypes.INTEGER,
       allowNull: false,
