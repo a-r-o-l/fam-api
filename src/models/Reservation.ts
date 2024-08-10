@@ -13,6 +13,10 @@ export const Reservation = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    value: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     hidden: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,

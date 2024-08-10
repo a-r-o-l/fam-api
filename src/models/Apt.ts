@@ -17,16 +17,13 @@ export const Apt = sequelize.define(
       type: DataTypes.STRING(50),
       allowNull: false,
     },
-    rented: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+    building_name: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
     },
     it_was_sold: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
-    },
-    building_id: {
-      type: DataTypes.INTEGER,
     },
     active_contract_id: {
       type: DataTypes.INTEGER,

@@ -15,6 +15,10 @@ import uploadsRoutes from "./src/routes/uploads.route";
 import LoginRoutes from "./src/routes/login.route";
 import accountRoutes from "./src/routes/accounts.route";
 import subscriptionsRoutes from "./src/routes/subscriptions.route";
+import aptsRoutes from "./src/routes/apts.route";
+import housesRoutes from "./src/routes/house.route";
+import loungesRoutes from "./src/routes/lounge.route";
+import reservationsRoutes from "./src/routes/reservation.route";
 import webHookRoutes from "./src/routes/webHook.route";
 import authenticateToken from "./src/middlewares/authMiddleware";
 import "./src/models/asociations";
@@ -54,6 +58,10 @@ app.use(authenticateToken, analitycsRoutes);
 app.use(authenticateToken, apartmentsRoutes);
 app.use(authenticateToken, contractsRoutes);
 app.use(authenticateToken, uploadsRoutes);
+app.use(authenticateToken, aptsRoutes);
+app.use(authenticateToken, housesRoutes);
+app.use(authenticateToken, loungesRoutes);
+app.use(authenticateToken, reservationsRoutes);
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -71,7 +79,7 @@ app.get("/ping", async (req: Request, res: Response) => {
 
 async function main() {
   try {
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ force: true });
     console.log("Connection has been established successfully.");
     app.listen(process.env.PORT, () => {
       console.log(`Server running on port ${process.env.PORT}`);

@@ -141,7 +141,7 @@ export const updatePayment = async (req: Request, res: Response) => {
       id
     )) as Model<PaymentInterface> | null;
     if (!foundPayment) {
-      return res.status(404).json({ message: "Build not found" });
+      return res.status(404).json({ message: "El pago no existe" });
     }
 
     const updateData = {
