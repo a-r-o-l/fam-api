@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { createContract, cancelContract } from "../controllers/contracts/POST";
-import { getContract, getContracts } from "../controllers/contracts/GET";
-import { updateContract } from "../controllers/contracts/UPDATE";
-import { deleteContract } from "../controllers/contracts/DELETE";
+import {
+  deleteContract,
+  cancelContract,
+  createContract,
+  getContract,
+  getContracts,
+  updateContract,
+} from "../controllers/contracts/contract.controller";
 
 const router = Router();
 

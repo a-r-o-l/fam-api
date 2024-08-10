@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
 import { Apartment } from "./Apartment";
-import { cleanExpiredContracts } from "../controllers/cron/POST";
+import { cleanExpiredContracts } from "../controllers/cron/cron.controller";
 
 export const Building = sequelize.define(
   "Building",

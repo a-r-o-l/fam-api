@@ -1,7 +1,9 @@
 import { Router } from "express";
-import { uploadImage } from "../controllers/uploads/POST";
-import { deleteImage } from "../controllers/uploads/DELETE";
-import { getImages } from "../controllers/uploads/GET";
+import {
+  getImages,
+  deleteImage,
+  uploadImage,
+} from "../controllers/uploads/upload.controller";
 
 const router = Router();
 

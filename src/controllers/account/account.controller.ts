@@ -1,18 +1,8 @@
 import { Request, Response } from "express";
 import { Account } from "../../models/Account";
 import bcrypt from "bcrypt";
-import { Op, where } from "sequelize";
-
-type AccountType = {
-  user_name: string;
-  email: string;
-  role: string;
-  verified: boolean;
-  password: string;
-  image_url: string;
-  google_id: string;
-  update: (body: any) => void;
-};
+import { Op } from "sequelize";
+import { AccountAttributes } from "../../utils/accountTypes";
 
 export const createAccount = async (req: Request, res: Response) => {
   try {
@@ -137,7 +127,9 @@ export const checkPassword = async (req: Request, res: Response) => {
   try {
     const { accountId } = req.params;
     const { password } = req.body;
-    const account = (await Account.findByPk(accountId)) as AccountType | null;
+    const account = (await Account.findByPk(
+      accountId
+    )) as AccountAttributes | null;
     if (!account) {
       return res.status(404).json({ message: "Cuenta no existente." });
     }
@@ -160,7 +152,9 @@ export const checkPassword = async (req: Request, res: Response) => {
 export const createNewPassword = async (req: Request, res: Response) => {
   try {
     const { accountId } = req.params;
-    const account = (await Account.findByPk(accountId)) as AccountType | null;
+    const account = (await Account.findByPk(
+      accountId
+    )) as AccountAttributes | null;
     if (!account) {
       return res.status(404).json({ message: "Cuenta no existente." });
     }
@@ -183,7 +177,9 @@ export const createNewPassword = async (req: Request, res: Response) => {
 export const changePassword = async (req: Request, res: Response) => {
   try {
     const { accountId } = req.params;
-    const account = (await Account.findByPk(accountId)) as AccountType | null;
+    const account = (await Account.findByPk(
+      accountId
+    )) as AccountAttributes | null;
     if (!account) {
       return res.status(404).json({ message: "Cuenta no existente." });
     }

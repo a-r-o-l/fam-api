@@ -4,59 +4,10 @@ import { Contract } from "../../models/Contract";
 import { Op } from "sequelize";
 import dayjs from "dayjs";
 import { Payment } from "../../models/Payment";
-
-type ApartmentAttributes = {
-  id?: number;
-  number?: string;
-  rented?: boolean;
-  building_id?: number;
-  account_id?: number;
-  active_contract_id?: number | null;
-  active_renter_id?: number | null;
-  save: () => void;
-};
-
-type RenterAttributes = {
-  id?: number;
-  name?: string;
-  lastname?: string;
-  dni?: string;
-  phone?: string;
-  email?: string;
-  image_url?: string;
-  account_id?: number;
-  active_contract_id: number | null;
-  active_apartment_id: number | null;
-  save: () => void;
-};
-
-type ContractsAttributes = {
-  id?: number;
-  months_amount: number;
-  value: number;
-  start_date?: string;
-  end_date?: string;
-  renter_id?: number;
-  apartment_id?: number;
-  is_expired?: boolean;
-  upgrade_value: number;
-  account_id?: number;
-  setDataValue: (key: string, value: boolean) => void;
-  save: () => void;
-};
-
-type PaymentAttributes = {
-  id?: number;
-  value: number;
-  date: string;
-  payed: boolean | null;
-  receipt?: string;
-  contract_id?: number;
-  apartment_id?: number;
-  renter_id?: number;
-  account_id?: number;
-  payment_number?: number;
-};
+import { ApartmentAttributes } from "../../utils/apartmentTypes";
+import { RenterAttributes } from "../../utils/renterTypes";
+import { ContractAttributes } from "../../utils/contractTypes";
+import { PaymentType } from "../../utils/paymentTypes";
 
 export const cleanExpiredContracts = async () => {
   console.log("CLEAN EXPIRED CONTRACTS");
@@ -103,7 +54,7 @@ export const cleanExpiredContracts = async () => {
 
 export const createAutomaticPayments = async () => {
   console.log("CREATE AUTOMATIC PAYMENTS");
-  let newsPayments: PaymentAttributes[] = [];
+  let newsPayments: PaymentType[] = [];
   const currentMonth = dayjs().month();
   try {
     const renters = await Renter.findAll({
@@ -122,13 +73,13 @@ export const createAutomaticPayments = async () => {
       if (renter.active_contract_id !== null) {
         const contract = (await Contract.findByPk(
           renter.active_contract_id
-        )) as unknown as ContractsAttributes;
+        )) as unknown as ContractAttributes;
 
         const payments = (await Payment.findAll({
           where: {
             contract_id: renter.active_contract_id,
           },
-        })) as unknown as PaymentAttributes[];
+        })) as unknown as PaymentType[];
 
         if (!payments?.length) {
           if (dayjs(contract.start_date).isAfter(dayjs())) {

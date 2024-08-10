@@ -1,57 +1,72 @@
 import { Request, Response } from "express";
-import { Apartment } from "../../models/Apartment";
-import { Renter } from "../../models/Renter";
 import { Contract } from "../../models/Contract";
+import { Renter } from "../../models/Renter";
+import { Apartment } from "../../models/Apartment";
 import { Op } from "sequelize";
 import dayjs from "dayjs";
+import { Payment } from "../../models/Payment";
+import { CustomRequest } from "../../utils/reqResTypes";
+import { RenterAttributes } from "../../utils/renterTypes";
+import { ContractAttributes } from "../../utils/contractTypes";
+import { ApartmentAttributes } from "../../utils/apartmentTypes";
 
-type ApartmentAttributes = {
-  id?: number;
-  number?: string;
-  rented?: boolean;
-  building_id?: number;
-  active_contract_id?: number | null;
-  active_renter_id?: number | null;
-  save: () => void;
+export const getContracts = async (req: CustomRequest, res: Response) => {
+  if (!req?.user?.id) {
+    throw new Error("User ID is not defined");
+  }
+  const accountId = req.user.id;
+  try {
+    const contracts = await Contract.findAll({
+      where: { account_id: accountId },
+      include: [
+        {
+          model: Renter,
+          as: "Renter",
+        },
+        {
+          model: Apartment,
+          as: "Apartment",
+        },
+      ],
+    });
+    res.json(contracts);
+  } catch (error: unknown) {
+    return res.status(500).json({ message: (error as Error).message });
+  }
 };
 
-type RenterAttributes = {
-  id?: number;
-  name?: string;
-  lastname?: string;
-  dni?: string;
-  phone?: string;
-  email?: string;
-  image_url?: string;
-  active_contract_id?: number | null;
-  active_apartment_id?: number | null;
-  save: () => void;
+export const getContract = async (req: CustomRequest, res: Response) => {
+  if (!req?.user?.id) {
+    throw new Error("User ID is not defined");
+  }
+  const accountId = req.user.id;
+  try {
+    const { id } = req.params;
+    const foundContract = await Contract.findOne({
+      where: { id, account_id: accountId },
+      include: [
+        {
+          model: Renter,
+          as: "Renter",
+        },
+        {
+          model: Apartment,
+          as: "Apartment",
+        },
+      ],
+    });
+    if (!foundContract)
+      return res.status(404).json({ message: "Contract not found" });
+    res.json(foundContract);
+  } catch (error: unknown) {
+    return res.status(500).json({ message: (error as Error).message });
+  }
 };
-
-type ContractAttributes = {
-  id?: number;
-  end_date?: string;
-  is_expired?: boolean;
-  is_cancelled?: boolean;
-  renter_id?: number;
-  apartment_id?: number;
-  start_date?: string;
-  months_amount?: number;
-  value?: number;
-  months_upgrade?: number;
-  upgrade_value?: number | null;
-  upgrade_start_date?: string | null;
-  upgrade_end_date?: string | null;
-  account_id?: number;
-  save: () => void;
-  getDataValue: (key: string) => any;
-};
-
-interface CustomRequest extends Request {
-  user?: any;
-}
 
 export const createContract = async (req: CustomRequest, res: Response) => {
+  if (!req?.user?.id) {
+    throw new Error("User ID is not defined");
+  }
   const accountId = req.user.id;
   const {
     months_amount,
@@ -163,6 +178,9 @@ export const createContract = async (req: CustomRequest, res: Response) => {
 };
 
 export const cancelContract = async (req: CustomRequest, res: Response) => {
+  if (!req?.user?.id) {
+    throw new Error("User ID is not defined");
+  }
   const accountId = req.user.id;
   const { id } = req.body;
   try {
@@ -197,6 +215,88 @@ export const cancelContract = async (req: CustomRequest, res: Response) => {
     foundContract.save();
 
     res.json({ message: "Contrato cancelado" });
+  } catch (error: unknown) {
+    return res.status(500).json({ message: (error as Error).message });
+  }
+};
+
+export const updateContract = async (req: Request, res: Response) => {
+  try {
+    const {
+      months_amount,
+      value,
+      start_date,
+      end_date,
+      renter_id,
+      apartment_id,
+      is_expired,
+      months_upgrade,
+      upgrade_value,
+      upgrade_start_date,
+      upgrade_end_date,
+    } = req.body;
+    const { id } = req.params;
+    const foundContract = await Contract.findByPk(id);
+
+    if (!foundContract) {
+      return res.status(404).json({ message: "Contract not found" });
+    }
+
+    await foundContract.update({
+      months_amount,
+      value,
+      start_date,
+      end_date,
+      renter_id,
+      apartment_id,
+      is_expired,
+      months_upgrade,
+      upgrade_value,
+      upgrade_start_date,
+      upgrade_end_date,
+    });
+
+    res.json(foundContract);
+  } catch (error: unknown) {
+    return res.status(500).json({ message: (error as Error).message });
+  }
+};
+
+export const deleteContract = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const contract = (await Contract.findByPk(
+      id
+    )) as unknown as ContractAttributes;
+
+    const renter = (await Renter.findByPk(
+      contract?.renter_id
+    )) as unknown as RenterAttributes;
+
+    const apartment = (await Apartment.findByPk(
+      contract?.apartment_id
+    )) as unknown as ApartmentAttributes;
+
+    const payments = await Payment.findAll({
+      where: { contract_id: id },
+    });
+
+    renter.update({
+      active_contract_id: null,
+      active_apartment_id: null,
+    });
+
+    apartment.update({
+      active_contract_id: null,
+      rented: false,
+      active_renter_id: null,
+    });
+    if (payments.length) {
+      contract.update({ is_cancelled: true });
+    } else {
+      await Contract.destroy({ where: { id } });
+    }
+    res.sendStatus(204);
   } catch (error: unknown) {
     return res.status(500).json({ message: (error as Error).message });
   }

@@ -5,37 +5,9 @@ import { Renter } from "../../models/Renter";
 import { Op } from "sequelize";
 import dayjs from "dayjs";
 import { Apartment } from "../../models/Apartment";
-import { ParsedUrlQuery } from "querystring";
-
-interface IPayment {
-  id: number;
-  renter_id: number;
-  paid: boolean;
-  value: number;
-  date: string;
-  payed: boolean;
-  receipt: string;
-  contract_id: number;
-  // otras propiedades...
-  toJSON(): Object;
-}
-
-interface IRenter {
-  id: number;
-  name: string;
-  lastname: string;
-}
-
-interface QueryParams extends ParsedUrlQuery {
-  type: any;
-  from: any;
-  to: any;
-}
-
-interface CustomRequest extends Request {
-  user?: any;
-  query: QueryParams;
-}
+import { CustomRequest } from "../../utils/reqResTypes";
+import { RenterInterface } from "../../utils/renterTypes";
+import { PaymentAttributes } from "../../utils/paymentTypes";
 
 export const getAnalitycs = async (req: Request, res: Response) => {
   try {
@@ -44,30 +16,15 @@ export const getAnalitycs = async (req: Request, res: Response) => {
       order: [["id", "ASC"]],
       attributes: ["id", "name", "lastname"],
     });
-    const payments = (await Payment.findAll()) as unknown as IPayment[];
+    const payments =
+      (await Payment.findAll()) as unknown as PaymentAttributes[];
 
     for (let renter of renters) {
-      const renterWithPayments = renter as unknown as IRenter;
+      const renterWithPayments = renter as unknown as RenterInterface;
       const renterPayments = payments.filter(
-        (payment: IPayment) => payment.renter_id === renterWithPayments.id
+        (payment: PaymentAttributes) =>
+          payment.renter_id === renterWithPayments.id
       );
-
-      // renter.setDataValue(
-      //   "payedPayments",
-      //   renterPayments.reduce(
-      //     (sum, payment: IPayment) =>
-      //       payment.paid ? sum + payment.amount : sum,
-      //     0
-      //   )
-      // );
-      // renter.setDataValue(
-      //   "pendingPayments",
-      //   renterPayments.reduce(
-      //     (sum, payment: IPayment) =>
-      //       !payment.paid ? sum + payment.amount : sum,
-      //     0
-      //   )
-      // );
     }
 
     res.json({ renters });
@@ -77,6 +34,9 @@ export const getAnalitycs = async (req: Request, res: Response) => {
 };
 
 export const getAnalitycs2 = async (req: CustomRequest, res: Response) => {
+  if (!req?.user?.id) {
+    throw new Error("User ID is not defined");
+  }
   const accountId = req.user.id;
   const { type, from, to } = req.query;
 
@@ -129,6 +89,9 @@ export const getAnalitycs2 = async (req: CustomRequest, res: Response) => {
 };
 
 export const getFeatures = async (req: CustomRequest, res: Response) => {
+  if (!req?.user?.id) {
+    throw new Error("User ID is not defined");
+  }
   const accountId = req.user.id;
   const buildings = await Building.findAll({
     where: { account_id: accountId },

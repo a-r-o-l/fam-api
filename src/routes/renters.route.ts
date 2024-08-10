@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { deleteRenter } from "../controllers/renters/DELETE";
 import {
+  updateRenter,
+  createRenter,
+  deleteRenter,
   getRenter,
-  getRenters,
   getRenterByContract,
-} from "../controllers/renters/GET";
-import { createRenter } from "../controllers/renters/POST";
-import { updateRenter } from "../controllers/renters/UPDATE";
+  getRenters,
+} from "../controllers/renters/renter.controller";
 
 const router = Router();
 

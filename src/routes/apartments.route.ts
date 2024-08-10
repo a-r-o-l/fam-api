@@ -1,8 +1,11 @@
 import { Router } from "express";
-import { deleteApartment } from "../controllers/apartments/DELETE";
-import { getApartment, getApartments } from "../controllers/apartments/GET";
-import { createApartment } from "../controllers/apartments/POST";
-import { updateApartment } from "../controllers/apartments/UPDATE";
+import {
+  createApartment,
+  deleteApartment,
+  getApartment,
+  getApartments,
+  updateApartment,
+} from "../controllers/apartments/apartment.controller";
 
 const router = Router();
 

@@ -3,7 +3,7 @@ import {
   getAnalitycs,
   getAnalitycs2,
   getFeatures,
-} from "../controllers/analitycs/GET";
+} from "../controllers/analitycs/analitycs.controller";
 
 const router = Router();
 

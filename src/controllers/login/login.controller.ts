@@ -6,20 +6,7 @@ import { RefreshToken } from "../../models/RefreshToken";
 import { Model } from "sequelize";
 import { Subscription } from "../../models/Subscription";
 import dayjs from "dayjs";
-
-interface AccountInstance extends Model {
-  id: number;
-  user_name: string;
-  password: string;
-  email: string;
-  role: string;
-  verified: boolean;
-  image_url: string;
-  Subscriptions?: (typeof Subscription)[] | [];
-  is_new?: boolean;
-  google_id?: string;
-}
-
+import { AccountInterface } from "../../utils/accountTypes";
 interface IRefreshToken {
   id?: number;
   user_id: number;
@@ -38,7 +25,7 @@ export const loginUser = async (req: Request, res: Response) => {
     const user = (await Account.findOne({
       where: searchCriteria,
       include: [{ model: Subscription, as: "Subscriptions" }],
-    })) as AccountInstance | null;
+    })) as AccountInterface | null;
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -59,7 +46,7 @@ export const loginUser = async (req: Request, res: Response) => {
       }
     }
 
-    if (!google_id) {
+    if (!google_id && !!user?.password) {
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
@@ -127,7 +114,7 @@ export const getRefreshToken = async (req: Request, res: Response) => {
 
     const user = (await Account.findByPk(decoded.id, {
       include: [{ model: Subscription, as: "Subscriptions" }],
-    })) as AccountInstance | null;
+    })) as AccountInterface | null;
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
