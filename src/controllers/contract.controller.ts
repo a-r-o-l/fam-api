@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
-import { Contract } from "../../models/Contract";
-import { Renter } from "../../models/Renter";
-import { Apartment } from "../../models/Apartment";
+import { Contract } from "../models/Contract";
+import { Renter } from "../models/Renter";
+import { Apartment } from "../models/Apartment";
 import { Op } from "sequelize";
 import dayjs from "dayjs";
-import { Payment } from "../../models/Payment";
-import { CustomRequest } from "../../utils/reqResTypes";
-import { RenterAttributes } from "../../utils/renterTypes";
-import { ContractAttributes } from "../../utils/contractTypes";
-import { ApartmentAttributes } from "../../utils/apartmentTypes";
+import { Payment } from "../models/Payment";
+import { CustomRequest } from "../utils/reqResTypes";
+import { RenterAttributes } from "../utils/renterTypes";
+import { ContractAttributes } from "../utils/contractTypes";
+import { ApartmentAttributes } from "../utils/apartmentTypes";
 
 export const getContracts = async (req: CustomRequest, res: Response) => {
   if (!req?.user?.id) {

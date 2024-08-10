@@ -5,7 +5,7 @@ import {
   getBuilding,
   getBuildings,
   updateBuilding,
-} from "../controllers/buildings/building.controller";
+} from "../controllers/building.controller";
 
 const router = Router();
 

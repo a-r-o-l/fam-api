@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { Apartment } from "../../models/Apartment";
-import { Building } from "../../models/Building";
-import { Contract } from "../../models/Contract";
-import { Renter } from "../../models/Renter";
-import { CustomRequest } from "../../utils/reqResTypes";
+import { Apartment } from "../models/Apartment";
+import { Building } from "../models/Building";
+import { Contract } from "../models/Contract";
+import { Renter } from "../models/Renter";
+import { CustomRequest } from "../utils/reqResTypes";
 
 export const getApartments = async (req: CustomRequest, res: Response) => {
   try {

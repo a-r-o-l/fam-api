@@ -21,7 +21,7 @@ import "./src/models/asociations";
 import {
   cleanExpiredContracts,
   createAutomaticPayments,
-} from "./src/controllers/cron/cron.controller";
+} from "./src/controllers/cron.controller";
 import dayjs from "dayjs";
 import path from "path";
 

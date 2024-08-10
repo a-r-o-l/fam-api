@@ -7,7 +7,7 @@ import {
   createNewPassword,
   checkPassword,
   changePassword,
-} from "../controllers/account/account.controller";
+} from "../controllers/account.controller";
 
 const router = Router();
 

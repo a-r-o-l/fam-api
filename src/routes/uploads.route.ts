@@ -3,7 +3,7 @@ import {
   getImages,
   deleteImage,
   uploadImage,
-} from "../controllers/uploads/upload.controller";
+} from "../controllers/upload.controller";
 
 const router = Router();
 

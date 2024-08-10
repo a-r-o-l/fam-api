@@ -4,7 +4,7 @@ import {
   createSubscription,
   getSubscriptions,
   deleteSubscriptions,
-} from "../controllers/suscriptions/subscriptions.controller";
+} from "../controllers/subscriptions.controller";
 
 const router = Router();
 

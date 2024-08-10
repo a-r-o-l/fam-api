@@ -6,7 +6,7 @@ import {
   getContract,
   getContracts,
   updateContract,
-} from "../controllers/contracts/contract.controller";
+} from "../controllers/contract.controller";
 
 const router = Router();
 

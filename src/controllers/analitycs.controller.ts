@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { Building } from "../../models/Building";
-import { Payment } from "../../models/Payment";
-import { Renter } from "../../models/Renter";
+import { Building } from "../models/Building";
+import { Payment } from "../models/Payment";
+import { Renter } from "../models/Renter";
 import { Op } from "sequelize";
 import dayjs from "dayjs";
-import { Apartment } from "../../models/Apartment";
-import { CustomRequest } from "../../utils/reqResTypes";
-import { RenterInterface } from "../../utils/renterTypes";
-import { PaymentAttributes } from "../../utils/paymentTypes";
+import { Apartment } from "../models/Apartment";
+import { CustomRequest } from "../utils/reqResTypes";
+import { RenterInterface } from "../utils/renterTypes";
+import { PaymentAttributes } from "../utils/paymentTypes";
 
 export const getAnalitycs = async (req: Request, res: Response) => {
   try {

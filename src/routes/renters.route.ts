@@ -6,7 +6,7 @@ import {
   getRenter,
   getRenterByContract,
   getRenters,
-} from "../controllers/renters/renter.controller";
+} from "../controllers/renter.controller";
 
 const router = Router();
 

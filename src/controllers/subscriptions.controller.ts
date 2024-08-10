@@ -1,6 +1,6 @@
 import { MercadoPagoConfig, Preference } from "mercadopago";
 import { Request, Response } from "express";
-import { Subscription } from "../../models/Subscription";
+import { Subscription } from "../models/Subscription";
 import dayjs from "dayjs";
 
 interface CustomRequest extends Request {

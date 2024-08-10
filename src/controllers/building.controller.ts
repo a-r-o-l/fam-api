@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { Building } from "../../models/Building";
-import { Apartment } from "../../models/Apartment";
-import { Renter } from "../../models/Renter";
-import { Contract } from "../../models/Contract";
-import { CustomRequest } from "../../utils/reqResTypes";
-import { ApartmentAttributes } from "../../utils/apartmentTypes";
-import { BuildingAttributes } from "../../utils/buildingTypes";
+import { Building } from "../models/Building";
+import { Apartment } from "../models/Apartment";
+import { Renter } from "../models/Renter";
+import { Contract } from "../models/Contract";
+import { CustomRequest } from "../utils/reqResTypes";
+import { ApartmentAttributes } from "../utils/apartmentTypes";
+import { BuildingAttributes } from "../utils/buildingTypes";
 
 export const getBuildings = async (req: CustomRequest, res: Response) => {
   if (!req?.user?.id) {

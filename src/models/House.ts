@@ -1,10 +1,8 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
-import { Apartment } from "./Apartment";
-import { cleanExpiredContracts } from "../controllers/cron.controller";
 
-export const Building = sequelize.define(
-  "Building",
+export const House = sequelize.define(
+  "House",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -23,14 +21,6 @@ export const Building = sequelize.define(
       type: DataTypes.STRING(500),
       allowNull: true,
     },
-    apartments: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    apartments_with_floor: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
     account_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -40,16 +30,27 @@ export const Building = sequelize.define(
       defaultValue: false,
       allowNull: true,
     },
+    rented: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    active_contract_id: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
+    active_renter_id: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
+    it_was_sold: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
-    tableName: "Building",
+    tableName: "House",
     timestamps: true,
     createdAt: true,
     updatedAt: true,
-    hooks: {
-      beforeFind: async (options) => {
-        await cleanExpiredContracts();
-      },
-    },
   }
 );

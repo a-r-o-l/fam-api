@@ -5,7 +5,7 @@ import {
   getApartment,
   getApartments,
   updateApartment,
-} from "../controllers/apartments/apartment.controller";
+} from "../controllers/apartment.controller";
 
 const router = Router();
 

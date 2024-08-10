@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { Payment } from "../../models/Payment";
-import { Contract } from "../../models/Contract";
-import { Renter } from "../../models/Renter";
-import { Apartment } from "../../models/Apartment";
-import { Building } from "../../models/Building";
+import { Payment } from "../models/Payment";
+import { Contract } from "../models/Contract";
+import { Renter } from "../models/Renter";
+import { Apartment } from "../models/Apartment";
+import { Building } from "../models/Building";
 import dayjs from "dayjs";
 import { Model, Op } from "sequelize";
-import { PaymentInterface, PaymentAttributes } from "../../utils/paymentTypes";
-import { CustomRequest } from "../../utils/reqResTypes";
+import { PaymentInterface, PaymentAttributes } from "../utils/paymentTypes";
+import { CustomRequest } from "../utils/reqResTypes";
 
 export const getPayments = async (req: CustomRequest, res: Response) => {
   if (!req?.user?.id) {

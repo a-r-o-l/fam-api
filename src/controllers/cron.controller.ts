@@ -1,13 +1,13 @@
-import { Apartment } from "../../models/Apartment";
-import { Renter } from "../../models/Renter";
-import { Contract } from "../../models/Contract";
+import { Apartment } from "../models/Apartment";
+import { Renter } from "../models/Renter";
+import { Contract } from "../models/Contract";
 import { Op } from "sequelize";
 import dayjs from "dayjs";
-import { Payment } from "../../models/Payment";
-import { ApartmentAttributes } from "../../utils/apartmentTypes";
-import { RenterAttributes } from "../../utils/renterTypes";
-import { ContractAttributes } from "../../utils/contractTypes";
-import { PaymentType } from "../../utils/paymentTypes";
+import { Payment } from "../models/Payment";
+import { ApartmentAttributes } from "../utils/apartmentTypes";
+import { RenterAttributes } from "../utils/renterTypes";
+import { ContractAttributes } from "../utils/contractTypes";
+import { PaymentType } from "../utils/paymentTypes";
 
 export const cleanExpiredContracts = async () => {
   console.log("CLEAN EXPIRED CONTRACTS");

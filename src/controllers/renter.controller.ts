@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { Renter } from "../../models/Renter";
-import { Contract } from "../../models/Contract";
-import { Apartment } from "../../models/Apartment";
-import { Building } from "../../models/Building";
+import { Renter } from "../models/Renter";
+import { Contract } from "../models/Contract";
+import { Apartment } from "../models/Apartment";
+import { Building } from "../models/Building";
 import { Op, col } from "sequelize";
-import { CustomRequest } from "../../utils/reqResTypes";
+import { CustomRequest } from "../utils/reqResTypes";
 
 export const getRenters = async (req: CustomRequest, res: Response) => {
   if (!req?.user?.id) {

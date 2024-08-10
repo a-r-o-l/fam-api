@@ -5,7 +5,7 @@ import {
   deletePayment,
   getPayment,
   getPayments,
-} from "../controllers/payments/payment.controller";
+} from "../controllers/payment.controller";
 
 const router = Router();
 

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { Account } from "../../models/Account";
+import { Account } from "../models/Account";
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
-import { AccountAttributes } from "../../utils/accountTypes";
+import { AccountAttributes } from "../utils/accountTypes";
 
 export const createAccount = async (req: Request, res: Response) => {
   try {
