@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { Account } from "../../models/Account";
-import { RefreshToken } from "../../models/RefreshToken";
+import { Account } from "../models/Account";
+import { RefreshToken } from "../models/RefreshToken";
 import { Model } from "sequelize";
-import { Subscription } from "../../models/Subscription";
+import { Subscription } from "../models/Subscription";
 import dayjs from "dayjs";
-import { AccountInterface } from "../../utils/accountTypes";
+import { AccountInterface } from "../utils/accountTypes";
 interface IRefreshToken {
   id?: number;
   user_id: number;
