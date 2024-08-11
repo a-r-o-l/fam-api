@@ -59,6 +59,7 @@ export const createAutomaticPayments = async (id: number) => {
   const currentMonth = dayjs().month();
   try {
     const renters = await Renter.findAll({
+      //all the renters that have an active contract
       where: {
         account_id: id,
         active_contract_id: {
@@ -70,14 +71,17 @@ export const createAutomaticPayments = async (id: number) => {
       return;
     }
     for (const renterModel of renters) {
+      //for each renter
       const renter = renterModel.get() as RenterAttributes;
 
       if (renter.active_contract_id !== null) {
         const contract = (await Contract.findByPk(
+          //get the contract of the renter
           renter.active_contract_id
         )) as unknown as ContractAttributes;
 
         const payments = (await Payment.findAll({
+          //get all the payments of the contract
           where: {
             account_id: id,
             contract_id: renter.active_contract_id,
@@ -86,10 +90,12 @@ export const createAutomaticPayments = async (id: number) => {
 
         if (!payments?.length) {
           if (dayjs(contract.start_date).isAfter(dayjs())) {
+            // if the contract has not started yet, continue
             continue;
           }
 
           newsPayments.push({
+            //create the first payment of the contract
             contract_id: contract.id,
             renter_id: contract.renter_id,
             apartment_id: contract.apartment_id,
@@ -97,7 +103,7 @@ export const createAutomaticPayments = async (id: number) => {
               .month(currentMonth)
               .format("YYYY/MM/DD"),
             value:
-              contract.months_amount !== 0
+              contract.months_upgrade !== 0
                 ? contract.upgrade_value
                 : contract.value,
             payed: false,
@@ -105,6 +111,7 @@ export const createAutomaticPayments = async (id: number) => {
           });
         } else {
           const latestPayment: any = payments.reduce(
+            //get the latest payment of the contract
             (latest: any, payment: any) => {
               const paymentDate = dayjs(payment.date);
               return paymentDate.isAfter(latest.date) ? payment : latest;
@@ -118,12 +125,13 @@ export const createAutomaticPayments = async (id: number) => {
             lastPaymentMonth !== currentMonth
           ) {
             newsPayments.push({
+              //create the next payment of the contract if the last payment is before today and the last payment month is different from the current month
               contract_id: contract.id,
               date: dayjs(contract.start_date)
                 .month(currentMonth)
                 .format("YYYY/MM/DD"),
               value:
-                contract.months_amount !== 0
+                contract.months_upgrade !== 0
                   ? contract.upgrade_value
                   : contract.value,
               renter_id: contract.renter_id,

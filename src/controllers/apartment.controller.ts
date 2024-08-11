@@ -36,6 +36,7 @@ export const getApartments = async (req: CustomRequest, res: Response) => {
         },
       ],
     });
+
     res.json(apartments);
   } catch (error: unknown) {
     return res.status(500).json({ message: (error as Error).message });
