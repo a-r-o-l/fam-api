@@ -9,11 +9,12 @@ import { RenterAttributes } from "../utils/renterTypes";
 import { ContractAttributes } from "../utils/contractTypes";
 import { PaymentType } from "../utils/paymentTypes";
 
-export const cleanExpiredContracts = async () => {
+export const cleanExpiredContracts = async (id: number) => {
   console.log("CLEAN EXPIRED CONTRACTS");
   try {
     const contracts = await Contract.findAll({
       where: {
+        account_id: id,
         end_date: {
           [Op.lte]: dayjs().format("YYYY/MM/DD"),
         },
@@ -52,13 +53,14 @@ export const cleanExpiredContracts = async () => {
   }
 };
 
-export const createAutomaticPayments = async () => {
+export const createAutomaticPayments = async (id: number) => {
   console.log("CREATE AUTOMATIC PAYMENTS");
   let newsPayments: PaymentType[] = [];
   const currentMonth = dayjs().month();
   try {
     const renters = await Renter.findAll({
       where: {
+        account_id: id,
         active_contract_id: {
           [Op.ne]: null,
         },
@@ -77,6 +79,7 @@ export const createAutomaticPayments = async () => {
 
         const payments = (await Payment.findAll({
           where: {
+            account_id: id,
             contract_id: renter.active_contract_id,
           },
         })) as unknown as PaymentType[];
@@ -98,7 +101,7 @@ export const createAutomaticPayments = async () => {
                 ? contract.upgrade_value
                 : contract.value,
             payed: false,
-            account_id: contract.account_id,
+            account_id: id,
           });
         } else {
           const latestPayment: any = payments.reduce(
@@ -127,7 +130,7 @@ export const createAutomaticPayments = async () => {
               apartment_id: contract.apartment_id,
               payment_number: latestPayment.payment_number + 1,
               payed: false,
-              account_id: contract.account_id,
+              account_id: id,
             });
           }
         }

@@ -3,10 +3,13 @@ import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Account } from "../models/Account";
 import { RefreshToken } from "../models/RefreshToken";
-import { Model } from "sequelize";
 import { Subscription } from "../models/Subscription";
 import dayjs from "dayjs";
 import { AccountInterface } from "../utils/accountTypes";
+import {
+  cleanExpiredContracts,
+  createAutomaticPayments,
+} from "./cron.controller";
 interface IRefreshToken {
   id?: number;
   user_id: number;
@@ -151,6 +154,9 @@ export const getRefreshToken = async (req: Request, res: Response) => {
       secret,
       { expiresIn: "5h" }
     );
+
+    await cleanExpiredContracts(user.id!);
+    await createAutomaticPayments(user.id!);
 
     res.json({ accessToken: newAccessToken });
   } catch (error) {

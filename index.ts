@@ -22,10 +22,6 @@ import reservationsRoutes from "./src/routes/reservation.route";
 import webHookRoutes from "./src/routes/webHook.route";
 import authenticateToken from "./src/middlewares/authMiddleware";
 import "./src/models/asociations";
-import {
-  cleanExpiredContracts,
-  createAutomaticPayments,
-} from "./src/controllers/cron.controller";
 import dayjs from "dayjs";
 import path from "path";
 
@@ -79,7 +75,7 @@ app.get("/ping", async (req: Request, res: Response) => {
 
 async function main() {
   try {
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ force: false }); //always false!
     console.log("Connection has been established successfully.");
     app.listen(process.env.PORT, () => {
       console.log(`Server running on port ${process.env.PORT}`);

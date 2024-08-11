@@ -1,7 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
 import { Apartment } from "./Apartment";
-import { cleanExpiredContracts } from "../controllers/cron.controller";
 
 export const Building = sequelize.define(
   "Building",
@@ -46,10 +45,5 @@ export const Building = sequelize.define(
     timestamps: true,
     createdAt: true,
     updatedAt: true,
-    hooks: {
-      beforeFind: async (options) => {
-        await cleanExpiredContracts();
-      },
-    },
   }
 );
