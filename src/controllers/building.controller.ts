@@ -93,7 +93,7 @@ export const createBuilding = async (req: CustomRequest, res: Response) => {
 
 export const updateBuilding = async (req: CustomRequest, res: Response) => {
   try {
-    const { name, address, apartments } = req.body;
+    const { name, address, apartments, image_url } = req.body;
     if (!req?.user?.id) {
       throw new Error("User ID is not defined");
     }
@@ -104,7 +104,7 @@ export const updateBuilding = async (req: CustomRequest, res: Response) => {
     if (!foundBuilding)
       return res.status(404).json({ message: "Building not found" });
 
-    await foundBuilding.update({ name, address, apartments });
+    await foundBuilding.update({ name, address, apartments, image_url });
 
     const currentApartments = await Apartment.findAll({
       where: { building_id: id },

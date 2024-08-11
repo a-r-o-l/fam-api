@@ -46,7 +46,7 @@ export const getRenters = async (req: CustomRequest, res: Response) => {
           ],
           order: [
             [col("Contracts.Apartment.building_id"), "ASC"],
-            [col("Contracts.Apartment.number"), "ASC"],
+            [col("active_apartment_id"), "ASC"],
           ],
         });
         res.json(rentersByBuilding);
@@ -74,9 +74,10 @@ export const getRenters = async (req: CustomRequest, res: Response) => {
         ],
         order: [
           [col("Contracts.Apartment.building_id"), "ASC"],
-          [col("Contracts.Apartment.number"), "ASC"],
+          [col("active_apartment_id"), "ASC"],
         ],
       });
+
       res.json(renters);
     }
   } catch (error: unknown) {
