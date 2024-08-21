@@ -50,8 +50,8 @@ Apartment.hasMany(Contract, { foreignKey: "apartment_id", sourceKey: "id" });
 // Apt.hasMany(Contract, { foreignKey: "apartment_id", sourceKey: "id" });
 
 //Reservations
-// Reservation.belongsTo(Lounge, { foreignKey: "lounge_id", targetKey: "id" });
-// Lounge.hasMany(Reservation, { foreignKey: "lounge_id", sourceKey: "id" });
+Reservation.belongsTo(Lounge, { foreignKey: "lounge_id", targetKey: "id" });
+Lounge.hasMany(Reservation, { foreignKey: "lounge_id", sourceKey: "id" });
 
 //Building
 Building.hasMany(Apartment, { foreignKey: "building_id", sourceKey: "id" });

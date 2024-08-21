@@ -40,6 +40,11 @@ export const Reservation = sequelize.define(
       defaultValue: false,
       allowNull: true,
     },
+    booking: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0,
+    },
     renter: {
       type: DataTypes.JSON,
       allowNull: false,

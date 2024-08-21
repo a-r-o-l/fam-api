@@ -21,6 +21,7 @@ export const getLounges = async (req: CustomRequest, res: Response) => {
         {
           model: Reservation,
           as: "Reservations",
+          order: [["start_date", "ASC"]],
         },
       ],
     });
@@ -39,6 +40,14 @@ export const getLounge = async (req: CustomRequest, res: Response) => {
     const { id } = req.params;
     const foundLounge = await Lounge.findOne({
       where: { id, account_id: accountId },
+      include: [
+        {
+          model: Reservation,
+          as: "Reservations",
+          separate: true,
+          order: [["start_date", "ASC"]],
+        },
+      ],
     });
     if (!foundLounge)
       return res.status(404).json({ message: "Lounge not found" });

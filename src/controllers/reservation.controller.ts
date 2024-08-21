@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Reservation } from "../models/Reservation";
 import { CustomRequest } from "../utils/reqResTypes";
+import { Op } from "sequelize";
 
 export const getReservations = async (req: CustomRequest, res: Response) => {
   try {
@@ -46,20 +47,47 @@ export const createReservation = async (req: CustomRequest, res: Response) => {
     throw new Error("User ID is not defined");
   }
   const accountId = req.user.id;
-  const { start_date, end_date, lounge_id, payed, renter, value } = req.body;
+  const { start_date, end_date, lounge_id, payed, renter, value, booking } =
+    req.body;
   try {
-    const reservationExists = await Reservation.findOne({
+    const overlappingReservation = await Reservation.findOne({
       where: {
         lounge_id,
-        start_date,
-        end_date,
-
         account_id: accountId,
+        [Op.or]: [
+          {
+            start_date: {
+              [Op.between]: [start_date, end_date],
+            },
+          },
+          {
+            end_date: {
+              [Op.between]: [start_date, end_date],
+            },
+          },
+          {
+            [Op.and]: [
+              {
+                start_date: {
+                  [Op.lte]: start_date,
+                },
+              },
+              {
+                end_date: {
+                  [Op.gte]: end_date,
+                },
+              },
+            ],
+          },
+        ],
       },
     });
 
-    if (reservationExists) {
-      return res.status(400).json({ message: "El salon ya existe" });
+    if (overlappingReservation) {
+      return res.status(415).json({
+        message:
+          "El salón ya está reservado en el rango de fechas y horas proporcionadas.",
+      });
     }
     const newReservation = await Reservation.create({
       start_date,
@@ -68,6 +96,7 @@ export const createReservation = async (req: CustomRequest, res: Response) => {
       payed,
       renter,
       value,
+      booking,
       account_id: accountId,
     });
 
@@ -79,7 +108,9 @@ export const createReservation = async (req: CustomRequest, res: Response) => {
 
 export const updateReservation = async (req: Request, res: Response) => {
   try {
-    const { hidden, start_date, end_date, payed, renter, value } = req.body;
+    const { hidden, start_date, end_date, payed, renter, value, booking } =
+      req.body;
+    console.log(req.body);
     const { id } = req.params;
     const foundReservation = await Reservation.findByPk(id);
     if (!foundReservation) {
@@ -93,6 +124,7 @@ export const updateReservation = async (req: Request, res: Response) => {
       ...(hidden !== undefined && { hidden }),
       ...(value !== undefined && { value }),
       ...(renter !== undefined && { renter }),
+      ...(booking !== undefined && { booking }),
     };
 
     await foundReservation.update(updateData);
