@@ -95,6 +95,8 @@ export const createContract = async (req: CustomRequest, res: Response) => {
       where: {
         account_id: accountId,
         apartment_id: apartment_id,
+        is_cancelled: false,
+        is_expired: false,
         [Op.or]: [
           {
             start_date: {
@@ -167,8 +169,8 @@ export const createContract = async (req: CustomRequest, res: Response) => {
 
       foundRenter.active_contract_id = newContract.getDataValue("id");
       foundRenter.active_apartment_id = apartment_id;
-      foundRenter.save();
-      foundApartment.save();
+      await foundRenter.save();
+      await foundApartment.save();
     }
     res.json(newContract);
   } catch (error: unknown) {
@@ -181,7 +183,6 @@ export const cancelContract = async (req: CustomRequest, res: Response) => {
   if (!req?.user?.id) {
     throw new Error("User ID is not defined");
   }
-  const accountId = req.user.id;
   const { id } = req.body;
   try {
     const foundContract = (await Contract.findByPk(id)) as ContractAttributes;
@@ -210,9 +211,9 @@ export const cancelContract = async (req: CustomRequest, res: Response) => {
     foundContract.is_expired = true;
     foundContract.end_date = dayjs().format("YYYY/MM/DD");
 
-    foundApartment.save();
-    foundRenter.save();
-    foundContract.save();
+    await foundApartment.save();
+    await foundRenter.save();
+    await foundContract.save();
 
     res.json({ message: "Contrato cancelado" });
   } catch (error: unknown) {
