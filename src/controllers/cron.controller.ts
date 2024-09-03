@@ -37,16 +37,16 @@ export const cleanExpiredContracts = async (id: number) => {
         apartment.active_contract_id = null;
         apartment.active_renter_id = null;
         apartment.rented = false;
-        apartment.save();
+        await apartment.save();
       }
 
       if (renter.active_contract_id === contractModel.id) {
         renter.active_contract_id = null;
         renter.active_apartment_id = null;
-        renter.save();
+        await renter.save();
       }
       contractModel.is_expired = true;
-      contractModel.save();
+      await contractModel.save();
     }
   } catch (error: unknown) {
     console.log(error);
